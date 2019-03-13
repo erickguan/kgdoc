@@ -1,16 +1,18 @@
 import sbt._
-import Keys._
+import Keys.{libraryDependencies, scalaVersion, _}
 import Dependencies._
 
 val scioVersion = "0.7.2"
-val beamVersion = "2.9.0"
-val scalaMacrosVersion = "2.1.1"
+val beamVersion = "2.10.0"
+val circeVersion = "0.10.0"
+
+val scalaMacroVersion = "2.12.8"
 
 lazy val commonSettings = Defaults.coreDefaultSettings ++ Seq(
   organization := "me.erickguan.kgdoc",
   // Semantic versioning http://semver.org/
   version := "0.1.0-SNAPSHOT",
-  scalaVersion := "2.12.8",
+  scalaVersion := scalaMacroVersion,
   scalacOptions ++= Seq("-target:jvm-1.8",
                         "-deprecation",
                         "-feature",
@@ -19,11 +21,12 @@ lazy val commonSettings = Defaults.coreDefaultSettings ++ Seq(
 )
 
 lazy val paradiseDependency =
-  "org.scalamacros" % "paradise" % scalaMacrosVersion cross CrossVersion.full
+  "org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full
 lazy val macroSettings = Seq(
-  libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value,
+  libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaMacroVersion,
   addCompilerPlugin(paradiseDependency)
 )
+
 
 lazy val root: Project = project
   .in(file("."))
@@ -35,13 +38,17 @@ lazy val root: Project = project
     publish / skip := true,
     libraryDependencies ++= Seq(
       "com.spotify" %% "scio-core" % scioVersion,
+      "com.spotify" %% "scio-extra" % scioVersion,
       "com.spotify" %% "scio-test" % scioVersion % Test,
       "org.apache.beam" % "beam-runners-direct-java" % beamVersion,
       // optional dataflow runner
-       "org.apache.beam" % "beam-runners-google-cloud-dataflow-java" % beamVersion,
+      "org.apache.beam" % "beam-runners-google-cloud-dataflow-java" % beamVersion,
       jenaLibs % Compile,
       loggerLib % Compile,
       confLib % Compile,
+      "io.circe" %% "circe-core" % circeVersion % Compile,
+      "io.circe" %% "circe-generic" % circeVersion % Compile,
+      "io.circe" %% "circe-parser" % circeVersion % Compile,
       scalaTest % Test
     )
   )
