@@ -43,7 +43,6 @@ lazy val root: Project = project
       "org.apache.beam" % "beam-runners-direct-java" % beamVersion,
       // optional dataflow runner
 //      "org.apache.beam" % "beam-runners-google-cloud-dataflow-java" % beamVersion,
-      jenaLibs % Compile,
       loggerLib % Compile,
       confLib % Compile,
       "io.circe" %% "circe-core" % circeVersion % Compile,
