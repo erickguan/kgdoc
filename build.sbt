@@ -42,14 +42,16 @@ lazy val root: Project = project
       "com.spotify" %% "scio-test" % scioVersion % Test,
       "org.apache.beam" % "beam-runners-direct-java" % beamVersion,
       // optional dataflow runner
-      "org.apache.beam" % "beam-runners-google-cloud-dataflow-java" % beamVersion,
+//      "org.apache.beam" % "beam-runners-google-cloud-dataflow-java" % beamVersion,
       jenaLibs % Compile,
       loggerLib % Compile,
       confLib % Compile,
       "io.circe" %% "circe-core" % circeVersion % Compile,
       "io.circe" %% "circe-generic" % circeVersion % Compile,
+      "io.circe" %% "circe-generic-extras" % circeVersion % Compile,
       "io.circe" %% "circe-parser" % circeVersion % Compile,
-      scalaTest % Test
+      "org.scalactic" %% "scalactic" % "3.0.5",
+      "org.scalatest" %% "scalatest" % "3.0.5" % Test
     )
   )
   .enablePlugins(PackPlugin)
