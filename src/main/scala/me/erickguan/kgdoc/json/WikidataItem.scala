@@ -1,4 +1,4 @@
-package me.erickguan.kgdoc.structure
+package me.erickguan.kgdoc.json
 
 import io.circe.Decoder
 import io.circe.generic.auto._
@@ -19,6 +19,13 @@ case class QuantityDataValue(amount: String,
                              lowerBound: String,
                              unit: String)
     extends DataValue
+@ConfiguredJsonCodec case class WikibaseEntityIdDataValue(
+    @JsonKey("entity-type") entityType: String,
+    @JsonKey("numeric-id") numericId: Long
+) extends DataValue
+object WikibaseEntityIdDataValue {
+  implicit val config: Configuration = Configuration.default
+}
 @ConfiguredJsonCodec case class TimeDataValue(
     time: String,
     timezone: Long,
@@ -35,8 +42,8 @@ object DataValue {
     Decoder.instance[DataValue](c => {
       c.downField("type").as[String].flatMap {
         case "string" => c.as[StringDataValue] // has to be treated differently
-        // we don't use `wikibase-entityid`
-        // case "wikibase-entityid" => valueField.as[Map[String, String]]
+        case "wikibase-entityid" =>
+          c.downField("value").as[WikibaseEntityIdDataValue]
         case "globecoordinate" =>
           c.downField("value").as[GlobeCoordinateDataValue]
         case "quantity" => c.downField("value").as[QuantityDataValue]

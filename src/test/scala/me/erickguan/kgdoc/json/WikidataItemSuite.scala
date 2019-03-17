@@ -1,4 +1,4 @@
-package me.erickguan.kgdoc.structure
+package me.erickguan.kgdoc.json
 
 import me.erickguan.kgdoc.KgdocSuite
 import io.circe.parser.decode
@@ -35,7 +35,16 @@ class WikidataItemSuite extends KgdocSuite {
     assert(sdv === Right(StringDataValue("A.jpg")))
   }
 
-  test("GlobalCoordinateDataValue parsing works", Tag("parsing")) {
+  test("WikibaseEntityIdDataValue parsing works", Tag("parsing")) {
+    val json = """{
+                 |                                    "entity-type": "item",
+                 |                                    "numeric-id": 328
+                 |                            }""".stripMargin
+    val wdv = decode[WikibaseEntityIdDataValue](json)
+    assert(wdv == Right(WikibaseEntityIdDataValue("item", 328)))
+  }
+
+  test("GlobeCoordinateDataValue parsing works", Tag("parsing")) {
     val json = """ {
                  |              "latitude": 52.516666666667,
                  |              "longitude": 13.383333333333,
