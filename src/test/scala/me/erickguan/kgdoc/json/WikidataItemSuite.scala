@@ -99,6 +99,15 @@ class WikidataItemSuite extends KgdocSuite {
                       "http://www.wikidata.org/entity/Q1985727")))
   }
 
+  test("MonoLingualTextDataValue parsing works", Tag("parsing")) {
+    val json =
+      """{"text":"\u5df4\u5dde\u9547","language":"zh-cn"}"""
+    val mltdv = decode[MonoLingualTextDataValue](json)
+    assert(
+      mltdv === Right(
+        MonoLingualTextDataValue("zh-cn", "巴州镇")))
+  }
+
   test("DataValue parsing works", Tag("parsing")) {
     val stringJson = """{
                  |            "value": "SomePicture.jpg",
@@ -375,7 +384,7 @@ class WikidataItemSuite extends KgdocSuite {
     val claims = Map(("P582", List(claim)))
     val siteLinks = Map(("de", siteLink))
     val item =
-      WikidataItem("asde", "item", labels, descs, aliases, claims, siteLinks)
+      WikidataItem("asde", "item", labels, descs, aliases, claims, Some(siteLinks))
     val decoded = decode[WikidataItem](json)
     assert(decoded === Right(item))
   }
