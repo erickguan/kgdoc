@@ -2,7 +2,7 @@ package me.erickguan.kgdoc.tasks
 
 import com.spotify.scio.extra.json._
 import com.spotify.scio.{io => scioIo, _}
-import _root_.io.circe.{Decoder, Json}
+
 
 /* Usage:
    `sbt "runMain me.erickguan.kgdoc.tasks.ExtractWikidataTriple
@@ -16,13 +16,14 @@ object ExtractWikidataTriple {
   def main(cmdlineArgs: Array[String]): Unit = {
     val (sc, args) = ContextAndArgs(cmdlineArgs)
 
-    // Open text files a `SCollection[String]`
-    val work = sc.jsonFile[WikidataItem](args("input"))
-      .saveAsJsonFile("/tmp/local_wordcount")
-    //    getOrElse("input", ExampleData.EXPORTED_WIKI_TABLE))
-//      .take(100)
-//      // Save result as text files under the output path
-//      .saveAsTableRowJsonFile(args("output"))
+    // Wikidata JSON dump keeps every records in a seperate line
+    val work = sc.textFile(args("input"))
+      .filter(s => s != "[" && s != "]")
+      .map(_.stripSuffix(","))
+      .debug(prefix = "===== DEBUG =====")
+      .map(WikidataItem.decodeJson)
+      .saveAsTextFile("/tmp/wikidata")
+
     sc.close()
 
     work.waitForResult().value.take(3).foreach(println)

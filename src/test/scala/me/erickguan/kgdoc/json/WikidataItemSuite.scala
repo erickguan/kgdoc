@@ -243,7 +243,7 @@ class WikidataItemSuite extends KgdocSuite {
                                       0.00027777777777778,
                                       "http://www.wikidata.org/entity/Q2")),
         "normal",
-        Map(
+        Some(Map(
           ("P580",
            List(
              Snak("value",
@@ -254,96 +254,94 @@ class WikidataItemSuite extends KgdocSuite {
                                 0,
                                 0,
                                 11,
-                                "http://www.wikidata.org/entity/Q1985727")))))
+                                "http://www.wikidata.org/entity/Q1985727"))))))
       )))
   }
 
   test("WikidataItem parsing works", Tag("parsing")) {
     val json =
       """{
-                 |  "sitelinks": {
-                 |    "de": {
-                 |      "site": "dewiki",
-                 |      "title": "New York City",
-                 |      "badges": [
-                 |          "Q17437798"
-                 |       ]
-                 |     }
-                 |  },
-                 |  "claims": [
-                 |    {
-                 |    "P582": {
-                 |      "id": "q60$5083E43C-228B-4E3E-B82A-4CB20A22A3FB",
-                 |      "mainsnak": {
-                 |        "snaktype": "value",
-                 |        "property": "P625",
-                 |        "datatype": "globecoordinate",
-                 |        "datavalue": {
-                 |          "value": {
-                 |            "latitude": 40.67,
-                 |            "longitude": -73.94,
-                 |            "altitude": null,
-                 |            "precision": 0.00027777777777778,
-                 |            "globe": "http://www.wikidata.org/entity/Q2"
-                 |          },
-                 |          "type": "globecoordinate"
-                 |        }
-                 |      },
-                 |      "type": "statement",
-                 |      "rank": "normal",
-                 |      "qualifiers": {
-                 |        "P580": [
-                 |          {
-                 |            "hash": "sssde3541cc531fa54adcaffebde6bef28g6hgjd",
-                 |            "snaktype": "value",
-                 |            "property": "P580",
-                 |            "datatype": "time",
-                 |            "datavalue": {
-                 |              "value": {
-                 |                "time": "+00000001994-01-01T00:00:00Z",
-                 |                "timezone": 0,
-                 |                "before": 0,
-                 |                "after": 0,
-                 |                "precision": 11,
-                 |                "calendarmodel": "http:\/\/www.wikidata.org\/entity\/Q1985727"
-                 |              },
-                 |              "type": "time"
-                 |            }
-                 |          }
-                 |        ]
-                 |      },
-                 |      "references": [
-                 |        {
-                 |          "hash": "d103e3541cc531fa54adcaffebde6bef28d87d32",
-                 |          "snaks": []
-                 |        }
-                 |      ]
-                 |    }
-                 |  }
-                 |  ],
-                 |  "aliases": {
-                 |    "en": [{
-                 |
-                 |        "language": "en",
-                 |        "value": "NYC"
-                 |
-                 |    }]
-                 |  },
-                 |  "descriptions": {
-                 |    "en": {
-                 |      "language": "en",
-                 |      "value": "english desc"
-                 |    }
-                 |  },
-                 |  "labels": {
-                 |    "en": {
-                 |      "language": "en",
-                 |      "value": "NYC"
-                 |    }
-                 |  },
-                 |  "type": "item",
-                 |  "id": "asde"
-                 |}""".stripMargin
+        |  "sitelinks": {
+        |    "de": {
+        |      "site": "dewiki",
+        |      "title": "New York City",
+        |      "badges": [
+        |          "Q17437798"
+        |       ]
+        |     }
+        |  },
+        |  "claims": {
+        |    "P582": [{
+        |      "id": "q60$5083E43C-228B-4E3E-B82A-4CB20A22A3FB",
+        |      "mainsnak": {
+        |        "snaktype": "value",
+        |        "property": "P625",
+        |        "datatype": "globecoordinate",
+        |        "datavalue": {
+        |          "value": {
+        |            "latitude": 40.67,
+        |            "longitude": -73.94,
+        |            "altitude": null,
+        |            "precision": 0.00027777777777778,
+        |            "globe": "http://www.wikidata.org/entity/Q2"
+        |          },
+        |          "type": "globecoordinate"
+        |        }
+        |      },
+        |      "type": "statement",
+        |      "rank": "normal",
+        |      "qualifiers": {
+        |        "P580": [
+        |          {
+        |            "hash": "sssde3541cc531fa54adcaffebde6bef28g6hgjd",
+        |            "snaktype": "value",
+        |            "property": "P580",
+        |            "datatype": "time",
+        |            "datavalue": {
+        |              "value": {
+        |                "time": "+00000001994-01-01T00:00:00Z",
+        |                "timezone": 0,
+        |                "before": 0,
+        |                "after": 0,
+        |                "precision": 11,
+        |                "calendarmodel": "http:\/\/www.wikidata.org\/entity\/Q1985727"
+        |              },
+        |              "type": "time"
+        |            }
+        |          }
+        |        ]
+        |      },
+        |      "references": [
+        |        {
+        |          "hash": "d103e3541cc531fa54adcaffebde6bef28d87d32",
+        |          "snaks": []
+        |        }
+        |      ]
+        |    }]
+        |  },
+        |  "aliases": {
+        |    "en": [{
+        |
+        |        "language": "en",
+        |        "value": "NYC"
+        |
+        |    }]
+        |  },
+        |  "descriptions": {
+        |    "en": {
+        |      "language": "en",
+        |      "value": "english desc"
+        |    }
+        |  },
+        |  "labels": {
+        |    "en": {
+        |      "language": "en",
+        |      "value": "NYC"
+        |    }
+        |  },
+        |  "type": "item",
+        |  "id": "asde"
+        |}""".stripMargin
     val claim = Claim(
       "statement",
       Snak("value",
@@ -354,7 +352,7 @@ class WikidataItemSuite extends KgdocSuite {
                                     0.00027777777777778,
                                     "http://www.wikidata.org/entity/Q2")),
       "normal",
-      Map(
+      Some(Map(
         ("P580",
          List(
            Snak("value",
@@ -365,7 +363,7 @@ class WikidataItemSuite extends KgdocSuite {
                               0,
                               0,
                               11,
-                              "http://www.wikidata.org/entity/Q1985727")))))
+                              "http://www.wikidata.org/entity/Q1985727"))))))
     )
 
     val siteLink = SiteLink("dewiki", "New York City")
@@ -374,11 +372,302 @@ class WikidataItemSuite extends KgdocSuite {
     val labels = Map(("en", langItem))
     val descs = Map(("en", desc))
     val aliases = Map(("en", List(langItem)))
-    val claims = List(Map(("P582", claim)))
+    val claims = Map(("P582", List(claim)))
     val siteLinks = Map(("de", siteLink))
     val item =
       WikidataItem("asde", "item", labels, descs, aliases, claims, siteLinks)
     val decoded = decode[WikidataItem](json)
     assert(decoded === Right(item))
+  }
+
+  test("can parse this WikidataItem") {
+    val json = """{
+                 |  "type": "item",
+                 |  "aliases": {},
+                 |  "labels": {},
+                 |  "descriptions": {},
+                 |  "sitelinks": {},
+                 |  "id": "Q33",
+                 |  "claims": {
+                 |    "P31": [
+                 |      {
+                 |        "rank": "normal",
+                 |        "references": [
+                 |          {
+                 |            "snaks": {
+                 |              "P304": [
+                 |                {
+                 |                  "snaktype": "value",
+                 |                  "property": "P304",
+                 |                  "datavalue": {
+                 |                    "type": "string",
+                 |                    "value": "603"
+                 |                  }
+                 |                }
+                 |              ],
+                 |              "P248": [
+                 |                {
+                 |                  "snaktype": "value",
+                 |                  "property": "P248",
+                 |                  "datavalue": {
+                 |                    "type": "wikibase-entityid",
+                 |                    "value": {
+                 |                      "entity-type": "item",
+                 |                      "numeric-id": 14334357
+                 |                    }
+                 |                  },
+                 |                  "datatype": "wikibase-item"
+                 |                }
+                 |              ],
+                 |              "P1683": [
+                 |                {
+                 |                  "snaktype": "value",
+                 |                  "property": "P1683",
+                 |                  "datavalue": {
+                 |                    "type": "monolingualtext",
+                 |                    "value": {
+                 |                      "language": "fi",
+                 |                      "text": "Joulukuun kuudentena päivänä vuonna 1917 Suomen eduskunta hyväksyi senaatin ilmoituksen siitä, että Suomi oli nyt itsenäinen."
+                 |                    }
+                 |                  },
+                 |                  "datatype": "monolingualtext"
+                 |                }
+                 |              ]
+                 |            },
+                 |            "allSnaks": [
+                 |              {
+                 |                "property": "P248",
+                 |                "datavalue": {
+                 |                  "type": "wikibase-entityid",
+                 |                  "value": {
+                 |                    "entity-type": "item",
+                 |                    "numeric-id": 14334357
+                 |                  }
+                 |                },
+                 |                "datatype": "wikibase-item"
+                 |              },
+                 |              {
+                 |                "property": "P304",
+                 |                "datavalue": {
+                 |                  "type": "string",
+                 |                  "value": "603"
+                 |                }
+                 |              },
+                 |              {
+                 |                "property": "P1683",
+                 |                "datavalue": {
+                 |                  "type": "monolingualtext",
+                 |                  "value": {
+                 |                    "language": "fi",
+                 |                    "text": "Joulukuun kuudentena päivänä vuonna 1917 Suomen eduskunta hyväksyi senaatin ilmoituksen siitä, että Suomi oli nyt itsenäinen."
+                 |                  }
+                 |                },
+                 |                "datatype": "monolingualtext"
+                 |              }
+                 |            ],
+                 |            "snaks-order": [
+                 |              "P248",
+                 |              "P304",
+                 |              "P1683"
+                 |            ]
+                 |          }
+                 |        ],
+                 |        "mainsnak": {
+                 |          "snaktype": "value",
+                 |          "property": "P31",
+                 |          "datavalue": {
+                 |            "type": "wikibase-entityid",
+                 |            "value": {
+                 |              "entity-type": "item",
+                 |              "numeric-id": 3624078
+                 |            }
+                 |          },
+                 |          "datatype": "wikibase-item"
+                 |        },
+                 |        "qualifiers": {
+                 |          "P580": [
+                 |            {
+                 |              "snaktype": "value",
+                 |              "property": "P580",
+                 |              "datavalue": {
+                 |                "type": "time",
+                 |                "value": {
+                 |                  "time": "+00000001917-12-06T00:00:00Z",
+                 |                  "timezone": 0,
+                 |                  "before": 0,
+                 |                  "after": 0,
+                 |                  "precision": 11,
+                 |                  "calendarmodel": "http://www.wikidata.org/entity/Q1985727"
+                 |                }
+                 |              },
+                 |              "datatype": "time"
+                 |            }
+                 |          ]
+                 |        },
+                 |        "qualifiers-order": [
+                 |          "P580"
+                 |        ],
+                 |        "id": "q33$CBE1D73C-6F18-45E6-A437-7657B825E87E",
+                 |        "type": "statement"
+                 |      },
+                 |      {
+                 |        "rank": "normal",
+                 |        "mainsnak": {
+                 |          "snaktype": "value",
+                 |          "property": "P31",
+                 |          "datavalue": {
+                 |            "type": "wikibase-entityid",
+                 |            "value": {
+                 |              "entity-type": "item",
+                 |              "numeric-id": 6256
+                 |            }
+                 |          },
+                 |          "datatype": "wikibase-item"
+                 |        },
+                 |        "id": "q33$1D955803-700D-4B70-997F-2ABB4C084EB2",
+                 |        "type": "statement"
+                 |      },
+                 |      {
+                 |        "rank": "normal",
+                 |        "mainsnak": {
+                 |          "snaktype": "value",
+                 |          "property": "P31",
+                 |          "datavalue": {
+                 |            "type": "wikibase-entityid",
+                 |            "value": {
+                 |              "entity-type": "item",
+                 |              "numeric-id": 185441
+                 |            }
+                 |          },
+                 |          "datatype": "wikibase-item"
+                 |        },
+                 |        "qualifiers": {
+                 |          "P580": [
+                 |            {
+                 |              "snaktype": "value",
+                 |              "property": "P580",
+                 |              "datavalue": {
+                 |                "type": "time",
+                 |                "value": {
+                 |                  "time": "+00000001995-01-01T00:00:00Z",
+                 |                  "timezone": 0,
+                 |                  "before": 0,
+                 |                  "after": 0,
+                 |                  "precision": 11,
+                 |                  "calendarmodel": "http://www.wikidata.org/entity/Q1985727"
+                 |                }
+                 |              },
+                 |              "datatype": "time"
+                 |            }
+                 |          ]
+                 |        },
+                 |        "qualifiers-order": [
+                 |          "P580"
+                 |        ],
+                 |        "id": "q33$81CCBEAB-A5E7-404A-B7E3-E46B240E179F",
+                 |        "type": "statement"
+                 |      },
+                 |      {
+                 |        "rank": "normal",
+                 |        "mainsnak": {
+                 |          "snaktype": "value",
+                 |          "property": "P31",
+                 |          "datavalue": {
+                 |            "type": "wikibase-entityid",
+                 |            "value": {
+                 |              "entity-type": "item",
+                 |              "numeric-id": 160016
+                 |            }
+                 |          },
+                 |          "datatype": "wikibase-item"
+                 |        },
+                 |        "qualifiers": {
+                 |          "P580": [
+                 |            {
+                 |              "snaktype": "value",
+                 |              "property": "P580",
+                 |              "datavalue": {
+                 |                "type": "time",
+                 |                "value": {
+                 |                  "time": "+00000001955-12-14T00:00:00Z",
+                 |                  "timezone": 0,
+                 |                  "before": 0,
+                 |                  "after": 0,
+                 |                  "precision": 11,
+                 |                  "calendarmodel": "http://www.wikidata.org/entity/Q1985727"
+                 |                }
+                 |              },
+                 |              "datatype": "time"
+                 |            }
+                 |          ]
+                 |        },
+                 |        "qualifiers-order": [
+                 |          "P580"
+                 |        ],
+                 |        "id": "Q33$0888ad3b-482b-1629-7deb-a9394955ce7a",
+                 |        "type": "statement"
+                 |      },
+                 |      {
+                 |        "rank": "normal",
+                 |        "mainsnak": {
+                 |          "snaktype": "value",
+                 |          "property": "P31",
+                 |          "datavalue": {
+                 |            "type": "wikibase-entityid",
+                 |            "value": {
+                 |              "entity-type": "item",
+                 |              "numeric-id": 6505795
+                 |            }
+                 |          },
+                 |          "datatype": "wikibase-item"
+                 |        },
+                 |        "qualifiers": {
+                 |          "P580": [
+                 |            {
+                 |              "snaktype": "value",
+                 |              "property": "P580",
+                 |              "datavalue": {
+                 |                "type": "time",
+                 |                "value": {
+                 |                  "time": "+00000001989-05-05T00:00:00Z",
+                 |                  "timezone": 0,
+                 |                  "before": 0,
+                 |                  "after": 0,
+                 |                  "precision": 11,
+                 |                  "calendarmodel": "http://www.wikidata.org/entity/Q1985727"
+                 |                }
+                 |              },
+                 |              "datatype": "time"
+                 |            }
+                 |          ]
+                 |        },
+                 |        "qualifiers-order": [
+                 |          "P580"
+                 |        ],
+                 |        "id": "Q33$54d5a285-4fd3-82a3-57ae-9b12b7ab2148",
+                 |        "type": "statement"
+                 |      },
+                 |      {
+                 |        "rank": "normal",
+                 |        "mainsnak": {
+                 |          "snaktype": "value",
+                 |          "property": "P31",
+                 |          "datavalue": {
+                 |            "type": "wikibase-entityid",
+                 |            "value": {
+                 |              "entity-type": "item",
+                 |              "numeric-id": 179164
+                 |            }
+                 |          },
+                 |          "datatype": "wikibase-item"
+                 |        },
+                 |        "id": "Q33$cdab5cb1-4e80-6b08-7f5b-bbbacc3db6ca",
+                 |        "type": "statement"
+                 |      }
+                 |    ]
+                 |  }
+                 |}""".stripMargin
+    val item = decode[WikidataItem](json)
+    assert(item.isRight, s"$item should be parsed")
   }
 }

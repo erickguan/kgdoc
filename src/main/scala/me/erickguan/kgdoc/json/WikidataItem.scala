@@ -1,9 +1,10 @@
 package me.erickguan.kgdoc.json
 
+import scala.collection.mutable
 import io.circe.Decoder
+import io.circe.parser.decode
 import io.circe.generic.auto._
 import io.circe.generic.extras._
-import io.circe.syntax._
 
 case class LangItem(language: String, value: String)
 case class SiteLink(site: String, title: String)
@@ -58,11 +59,20 @@ case class Snak(snaktype: String,
 case class Claim(`type`: String,
                  mainsnak: Snak,
                  rank: String,
-                 qualifiers: Map[String, List[Snak]])
+                 qualifiers: Option[Map[String, List[Snak]]])
 case class WikidataItem(id: String,
                         `type`: String,
                         labels: Map[String, LangItem],
                         descriptions: Map[String, LangItem],
                         aliases: Map[String, List[LangItem]],
-                        claims: List[Map[String, Claim]],
-                        sitelinks: Map[String, SiteLink])
+                        claims: Map[String, List[Claim]],
+                        sitelinks: Option[Map[String, SiteLink]])
+object WikidataItem {
+  def decodeJson(json: String): WikidataItem = {
+    decode[WikidataItem](json) match {
+      case Left(e) => throw e
+      case Right(item) => item
+    }
+  }
+
+}

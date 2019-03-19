@@ -2,10 +2,11 @@ import sbt._
 import Keys.{libraryDependencies, scalaVersion, _}
 import Dependencies._
 
-val scioVersion = "0.7.2"
+val scioVersion = "0.7.3"
 val beamVersion = "2.10.0"
 val circeVersion = "0.10.0"
 
+scalaVersion := "2.12.8"
 val scalaMacroVersion = "2.12.8"
 
 lazy val commonSettings = Defaults.coreDefaultSettings ++ Seq(
