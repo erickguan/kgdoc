@@ -1,13 +1,11 @@
 package me.erickguan.kgdoc.tasks
 
-import com.spotify.scio.extra.json._
-import com.spotify.scio.{io => scioIo, _}
+import com.spotify.scio._
 import me.erickguan.kgdoc.extractors.WikidataExtractor
 import me.erickguan.kgdoc.processors.WikidataJsonDumpLineProcessor
 
 /* Usage:
    `sbt "runMain me.erickguan.kgdoc.tasks.ExtractWikidataTriple
-    --project=[PROJECT] --runner=DirectRunner
     --input=samples/-*.json
     --output=/tmp/wikidata"`
  */
@@ -26,10 +24,8 @@ object ExtractWikidataTriple {
           WikidataExtractor
             .triples(WikidataJsonDumpLineProcessor.decodeJsonLine(l))
             .map(Triple.repr(_)))
-      .saveAsTextFile("/tmp/wikidata")
+      .saveAsTextFile(args("output"))
 
     sc.close()
-
-    work.waitForResult().value.take(3).foreach(println)
   }
 }
