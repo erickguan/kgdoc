@@ -2,6 +2,7 @@ package me.erickguan.kgdoc.tasks
 
 import com.spotify.scio.extra.json._
 import com.spotify.scio.{io => scioIo, _}
+import me.erickguan.kgdoc.extractors.WikidataExtractor
 
 
 /* Usage:
@@ -18,10 +19,8 @@ object ExtractWikidataTriple {
 
     // Wikidata JSON dump keeps every records in a seperate line
     val work = sc.textFile(args("input"))
-      .filter(s => s != "[" && s != "]")
-      .map(_.stripSuffix(","))
-      .debug(prefix = "===== DEBUG =====")
-      .map(WikidataItem.decodeJson)
+      .filter(WikidataExtractor.filterNonItem)
+      .map(WikidataItem.processJsonLine)
       .saveAsTextFile("/tmp/wikidata")
 
     sc.close()

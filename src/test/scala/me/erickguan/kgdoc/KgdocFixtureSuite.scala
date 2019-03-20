@@ -1,6 +1,6 @@
 package me.erickguan.kgdoc
 
-import org.scalatest.FunSuite
+import org.scalatest.fixture.FunSuite
 
-trait KgdocSuite extends FunSuite {
+trait KgdocFixtureSuite extends FunSuite {
 }
