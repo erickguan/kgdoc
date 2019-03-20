@@ -26,7 +26,7 @@ class WikidataExtractorSuite extends KgdocFixtureSuite {
 
   test("can extract triples", Tag("extraction")) { f =>
     assert(
-      f.items.flatMap(extractTriples) === Seq(
+      f.items.flatMap(triples) === Seq(
         Triple("Q1", "P31", "Q1454986"),
         Triple("Q23", "P31", "Q5"),
         Triple("Q298", "P31", "Q6256"),
@@ -37,7 +37,7 @@ class WikidataExtractorSuite extends KgdocFixtureSuite {
 
   test("can extract labels", Tag("extraction")) { f =>
     assert(
-      f.items.flatMap(extractLabelLiterals) === Seq(
+      f.items.flatMap(labelLiterals) === Seq(
         ItemLangLiteral("Q3614", "Occipital nerve stimulation", "en"),
         ItemLangLiteral("Q3614", "стимуляция затылочного нерва", "ru"),
         ItemLangLiteral("Q3614",
@@ -62,7 +62,7 @@ class WikidataExtractorSuite extends KgdocFixtureSuite {
 
   test("can extract descriptions", Tag("extraction")) { f =>
     assert(
-      f.items.flatMap(extractDescriptions) == Seq(
+      f.items.flatMap(descriptions) == Seq(
         ItemLangLiteral("Q3614", "medical treatment", "en"),
         ItemLangLiteral("Q3614", "traitement médical", "fr"),
         ItemLangLiteral(
@@ -79,7 +79,7 @@ class WikidataExtractorSuite extends KgdocFixtureSuite {
 
   test("can extract sitelinks", Tag("extraction")) { f =>
     assert(
-      f.items.flatMap(extractSitelinks) == Seq(
+      f.items.flatMap(sitelinks) == Seq(
         SiteLink("enwiki", "Occipital nerve stimulation"),
         SiteLink("hewiki", "גירוי עצבי עורפי")
       ))

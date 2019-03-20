@@ -3,6 +3,7 @@ package me.erickguan.kgdoc.tasks
 import com.spotify.scio.extra.json._
 import com.spotify.scio.{io => scioIo, _}
 import me.erickguan.kgdoc.extractors.WikidataExtractor
+import me.erickguan.kgdoc.processors.WikidataJsonDumpLineProcessor
 
 
 /* Usage:
@@ -12,15 +13,15 @@ import me.erickguan.kgdoc.extractors.WikidataExtractor
     --output=/tmp/wikidata"`
  */
 object ExtractWikidataTriple {
-  import me.erickguan.kgdoc.json._
-
   def main(cmdlineArgs: Array[String]): Unit = {
+    import me.erickguan.kgdoc.extractors.WikidataExtractionLineTransform._
+
     val (sc, args) = ContextAndArgs(cmdlineArgs)
 
     // Wikidata JSON dump keeps every records in a seperate line
     val work = sc.textFile(args("input"))
-      .filter(WikidataExtractor.filterNonItem)
-      .map(WikidataItem.processJsonLine)
+      .filter(WikidataJsonDumpLineProcessor.filterNonItem)
+      .flatMap(l => WikidataJsonDumpLineProcessor.extractJsonLine(l, WikidataExtractor.triples))
       .saveAsTextFile("/tmp/wikidata")
 
     sc.close()

@@ -70,18 +70,10 @@ case class WikidataItem(id: String,
                         claims: Map[String, List[Claim]],
                         sitelinks: Option[Map[String, SiteLink]])
 object WikidataItem {
-  private def decodeJson(json: String): WikidataItem = {
+  def decodeJson(json: String): WikidataItem = {
     decode[WikidataItem](json) match {
       case Left(e) => throw e
       case Right(item) => item
     }
   }
-  private def rstripLine(line: String): String = {
-    line.stripSuffix(",")
-  }
-
-  def processJsonLine(line: String): WikidataItem = {
-    decodeJson(rstripLine(line))
-  }
-
 }
