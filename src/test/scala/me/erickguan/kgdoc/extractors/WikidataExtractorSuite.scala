@@ -2,6 +2,7 @@ package me.erickguan.kgdoc.extractors
 
 import me.erickguan.kgdoc.KgdocFixtureSuite
 import me.erickguan.kgdoc.json.{SiteLink, WikidataItem}
+import me.erickguan.kgdoc.processors.WikidataJsonDumpLineProcessor
 import org.scalatest.{Outcome, Tag}
 
 import scala.io.Source
@@ -14,8 +15,8 @@ class WikidataExtractorSuite extends KgdocFixtureSuite {
   def withFixture(test: OneArgTest): Outcome = {
     val source = Source.fromURL(getClass.getResource("/fixtures/wikidata.json"))
     val items = source.getLines
-      .filter(filterNonItem)
-      .map(WikidataItem.processJsonLine)
+      .filter(WikidataJsonDumpLineProcessor.filterNonItem)
+      .map(WikidataJsonDumpLineProcessor.decodeJsonLine)
       .toSeq
     val fixtureParam = FixtureParam(items)
     try withFixture(test.toNoArgTest(fixtureParam)) // Invoke the test function
@@ -80,8 +81,8 @@ class WikidataExtractorSuite extends KgdocFixtureSuite {
   test("can extract sitelinks", Tag("extraction")) { f =>
     assert(
       f.items.flatMap(sitelinks) == Seq(
-        SiteLink("enwiki", "Occipital nerve stimulation"),
-        SiteLink("hewiki", "גירוי עצבי עורפי")
+        WikiSiteLink("Q3614", "enwiki", "Occipital nerve stimulation"),
+        WikiSiteLink("Q3614", "hewiki", "גירוי עצבי עורפי")
       ))
   }
 }

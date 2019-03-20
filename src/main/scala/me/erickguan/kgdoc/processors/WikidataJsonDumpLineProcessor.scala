@@ -14,16 +14,4 @@ object WikidataJsonDumpLineProcessor {
     decodeJson(rstripLine(line))
   }
 
-  def extract(item: WikidataItem,
-              f: WikidataItem => Iterable[LineTransformable],
-              separator: Char = '\t'): Iterable[String] = {
-    f(item).map(_.toLine(separator))
-  }
-
-  def extractJsonLine(line: String,
-                      f: WikidataItem => Iterable[LineTransformable],
-                      separator: Char = '\t'): Iterable[String] = {
-    extract(decodeJsonLine(line), f, separator)
-  }
-
 }

@@ -1,8 +1,6 @@
 package me.erickguan.kgdoc.extractors
 
-import me.erickguan.kgdoc.json.WikidataItem.decodeJson
 import me.erickguan.kgdoc.json._
-import me.erickguan.kgdoc.processors.LineTransformable
 
 object FilterHelpers {
   implicit class WikidataItemCondition(item: WikidataItem) {
@@ -21,23 +19,18 @@ object FilterHelpers {
 case class Triple(subject: String, predicate: String, `object`: String)
 case class ItemLangLiteral(item: String, literal: String, lang: String)
 case class WikiSiteLink(item: String, site: String, title: String)
+object Triple {
+  def repr(t: Triple, separator: Char = '\t'): String =
+    s"${t.subject}$separator${t.predicate}$separator${t.`object`}"
+}
+object ItemLangLiteral {
+  def repr(i: ItemLangLiteral, separator: Char = '\t'): String =
+    s"${i.item}$separator${i.literal}$separator${i.lang}"
+}
 
-object WikidataExtractionLineTransform {
-  implicit class TripleLine(t: Triple) extends LineTransformable {
-    override def toLine(separator: Char): String =
-      s"${t.subject}$separator${t.predicate}$separator${t.`object`}"
-  }
-
-  implicit class ItemLangLiteralLine(i: ItemLangLiteral)
-      extends LineTransformable {
-    override def toLine(separator: Char): String =
-      s"${i.item}$separator${i.literal}$separator${i.lang}"
-  }
-
-  implicit class WikiSiteLinkLine(l: WikiSiteLink) extends LineTransformable {
-    override def toLine(separator: Char): String = {
-      s"${l.item}$separator${l.site}$separator${l.title}"
-    }
+object WikiSiteLink {
+  def repr(l: WikiSiteLink, separator: Char = '\t'): String = {
+    s"${l.item}$separator${l.site}$separator${l.title}"
   }
 }
 
