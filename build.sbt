@@ -43,7 +43,8 @@ lazy val root: Project = project
       "com.spotify" %% "scio-test" % scioVersion % Test,
       "org.apache.beam" % "beam-runners-direct-java" % beamVersion,
       // optional dataflow runner
-//      "org.apache.beam" % "beam-runners-google-cloud-dataflow-java" % beamVersion,
+      "org.apache.beam" % "beam-runners-spark" % beamVersion,
+      //      "org.apache.beam" % "beam-runners-google-cloud-dataflow-java" % beamVersion,
       loggerLib % Compile,
       confLib % Compile,
       "io.circe" %% "circe-core" % circeVersion % Compile,
