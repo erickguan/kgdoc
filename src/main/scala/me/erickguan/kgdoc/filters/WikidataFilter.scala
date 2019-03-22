@@ -10,7 +10,9 @@ object WikidataFilter {
   val EntityType = "item"
 
   val entityFromDataValue: PartialFunction[DataValue, String] = {
-    case WikibaseEntityIdDataValue(entityType, id) if entityType == EntityType => id
+    case WikibaseEntityIdDataValue(entityType, id)
+        if entityType == EntityType =>
+      id
   }
 
   val entityFromOptionDataValue: PartialFunction[Option[DataValue], String] = {
@@ -44,8 +46,12 @@ object WikidataFilter {
                  objectEntityId: String,
                  item: WikidataItem): Boolean =
     item.claims.get(propertyId) match {
-      case Some(claims) => claims.exists(entityFromClaim(_) == objectEntityId)
-      case None         => false
+      case Some(claims) =>
+        claims.exists(
+          c =>
+            entityFromClaim
+              .isDefinedAt(c) && entityFromClaim(c) == objectEntityId)
+      case None => false
     }
 
   /**
