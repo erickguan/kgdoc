@@ -7,24 +7,22 @@ import me.erickguan.kgdoc.filters.WikidataFilter
 
 /* Usage:
    `sbt "runMain me.erickguan.kgdoc.tasks.ExtractWikidataTriple
-    --checkpoint=/data/wikidata/triple_chk"
+    --checkpoint=/data/wikidata/triple_chk
     --input=/data/wikidata
     --output=/data/wikidata/triple"`
  */
 object ExtractWikidataTriple {
   def main(cmdlineArgs: Array[String]): Unit = {
     import me.erickguan.kgdoc.extractors.Triple
+    import me.erickguan.kgdoc.processors.WikidataJsonDumpLineProcessor
 
     val (sc, args) = ContextAndArgs(cmdlineArgs)
 
     // Wikidata JSON dump keeps every records in a seperate line
-    val items = sc.checkpoint(args("checkpoint") + "-items") {
-      import me.erickguan.kgdoc.processors.WikidataJsonDumpLineProcessor
-
-      sc.textFile(args("input"))
-        .filter(WikidataJsonDumpLineProcessor.filterNonItem)
-        .map(WikidataJsonDumpLineProcessor.decodeJsonLine)
-    }
+    val items = sc
+      .textFile(args("input"))
+      .filter(WikidataJsonDumpLineProcessor.filterNonItem)
+      .map(WikidataJsonDumpLineProcessor.decodeJsonLine)
 
     val classes = sc.checkpoint(args("checkpoint") + "-classes") {
       items.filter(
