@@ -13,13 +13,16 @@ object WikidataFilter {
   }
 
   val entityFromSnak: PartialFunction[Snak, String] = {
-    case Snak(_, _, datatype, datavalue) if datatype == "wikibase-item" =>
+    case Snak(_, _, datatype, datavalue)
+        if (datatype == "wikibase-item") && entityFromDataValue.isDefinedAt(
+          datavalue) =>
       entityFromDataValue(datavalue)
   }
 
   val entityFromClaim: PartialFunction[Claim, String] = {
     case Claim(_, mainsnak, rank, _)
-        if rank == "normal" || rank == "preferred" =>
+        if (rank == "normal" || rank == "preferred") && entityFromSnak
+          .isDefinedAt(mainsnak) =>
       entityFromSnak(mainsnak)
   }
 
