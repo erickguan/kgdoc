@@ -2,20 +2,6 @@ package me.erickguan.kgdoc.extractors
 
 import me.erickguan.kgdoc.json._
 
-object FilterHelpers {
-  implicit class WikidataItemCondition(item: WikidataItem) {
-    def isEntity: Boolean = item.`type` == "item"
-  }
-
-  implicit class ClaimCondition(claim: Claim) {
-    def isValid: Boolean = claim.rank == "normal" || claim.rank == "preferred"
-  }
-
-  implicit class SnakCondition(snak: Snak) {
-    def isEntity: Boolean = snak.datatype == "wikibase-item"
-  }
-}
-
 case class Triple(subject: String, predicate: String, `object`: String)
 case class ItemLangLiteral(item: String, literal: String, lang: String)
 case class WikiSiteLink(item: String, site: String, title: String)
@@ -35,27 +21,15 @@ object WikiSiteLink {
 }
 
 object WikidataExtractor {
-
-  private val extractEntityFromDataValue: PartialFunction[DataValue, String] = {
-    case WikibaseEntityIdDataValue(_, numericId) => s"Q$numericId"
-  }
-
   def triples(item: WikidataItem): Iterable[Triple] = {
-    import FilterHelpers._
+    import me.erickguan.kgdoc.filters.WikidataFilter._
 
-    if (item.isEntity) {
-      for {
-        (p, c) <- item.claims
-        claim <- c
-        if claim.isValid
-        snak = claim.mainsnak
-        if snak.isEntity
-        dv = snak.datavalue
-        if extractEntityFromDataValue.isDefinedAt(dv)
-      } yield Triple(item.id, p, extractEntityFromDataValue(dv))
-    } else {
-      Iterable()
-    }
+    for {
+      (p, c) <- item.claims
+      if isEntity(item)
+      claim <- c
+      if entityFromClaim.isDefinedAt(claim)
+    } yield Triple(item.id, p, entityFromClaim(claim))
   }
 
   def aliases(item: WikidataItem): Iterable[ItemLangLiteral] = {

@@ -20,7 +20,8 @@ case class QuantityDataValue(amount: String,
                              lowerBound: String,
                              unit: String)
     extends DataValue
-case class MonoLingualTextDataValue(language: String, text: String) extends DataValue
+case class MonoLingualTextDataValue(language: String, text: String)
+    extends DataValue
 @ConfiguredJsonCodec case class WikibaseEntityIdDataValue(
     @JsonKey("entity-type") entityType: String,
     @JsonKey("numeric-id") numericId: Long
@@ -44,7 +45,8 @@ object DataValue {
     Decoder.instance[DataValue](c => {
       c.downField("type").as[String].flatMap {
         case "string" => c.as[StringDataValue] // has to be treated differently
-        case "monolingualtext" => c.downField("value").as[MonoLingualTextDataValue]
+        case "monolingualtext" =>
+          c.downField("value").as[MonoLingualTextDataValue]
         case "wikibase-entityid" =>
           c.downField("value").as[WikibaseEntityIdDataValue]
         case "globecoordinate" =>
@@ -58,21 +60,28 @@ case class Snak(snaktype: String,
                 property: String,
                 datatype: String,
                 datavalue: DataValue)
-case class Claim(`type`: String,
-                 mainsnak: Snak,
-                 rank: String,
-                 qualifiers: Option[Map[String, List[Snak]]])
-case class WikidataItem(id: String,
-                        `type`: String,
-                        labels: Map[String, LangItem],
-                        descriptions: Map[String, LangItem],
-                        aliases: Map[String, List[LangItem]],
-                        claims: Map[String, List[Claim]],
-                        sitelinks: Option[Map[String, SiteLink]])
+@ConfiguredJsonCodec case class Claim(
+    @JsonKey("type") claimType: String,
+    mainsnak: Snak,
+    rank: String,
+    qualifiers: Option[Map[String, List[Snak]]])
+object Claim {
+  implicit val config: Configuration = Configuration.default
+}
+@ConfiguredJsonCodec case class WikidataItem(
+    id: String,
+    @JsonKey("type") itemType: String,
+    labels: Map[String, LangItem],
+    descriptions: Map[String, LangItem],
+    aliases: Map[String, List[LangItem]],
+    claims: Map[String, List[Claim]],
+    sitelinks: Option[Map[String, SiteLink]])
 object WikidataItem {
+  implicit val config: Configuration = Configuration.default
+
   def decodeJson(json: String): WikidataItem = {
     decode[WikidataItem](json) match {
-      case Left(e) => throw e
+      case Left(e)     => throw e
       case Right(item) => item
     }
   }
