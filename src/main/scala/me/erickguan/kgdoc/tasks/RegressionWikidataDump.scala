@@ -8,8 +8,7 @@ import me.erickguan.kgdoc.filters.WikidataFilter
 /* Usage:
    `SBT_OPTS="-Xms1G -Xmx90G -Xss2M" sbt "runMain me.erickguan.kgdoc.tasks.RegressionWikidataDump
     --runner=DirectRunner
-    --input=/data/wikidata/wikidata-*-all.json
-    --output=/data/wikidata/tmp"`
+    --input=/data/wikidata/wikidata-*-all.json"`
  */
 object RegressionWikidataDump {
   def main(cmdlineArgs: Array[String]): Unit = {
@@ -21,7 +20,7 @@ object RegressionWikidataDump {
     val items = sc
       .textFile(args("input"))
       .filter(WikidataJsonDumpLineProcessor.filterNonItem)
-      .map(WikidataJsonDumpLineProcessor.decodeJsonLine)
+      .map(WikidataJsonDumpLineProcessor.decodeJsonLine(_).id)
       .debug()
 
     sc.close()
