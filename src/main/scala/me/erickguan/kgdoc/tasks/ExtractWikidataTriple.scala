@@ -43,7 +43,8 @@ object ExtractWikidataTriple {
         val excludeClasses = ctx(bibliographicClassesSideInput)
         !WikidataFilter.byInstanceOfEntities(excludeClasses, item)
       }
-      .flatMap { (l, _) =>
+      .toSCollection
+      .flatMap { l =>
         WikidataExtractor
           .triples(l)
           .map(Triple.repr(_))
