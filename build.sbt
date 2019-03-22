@@ -3,8 +3,9 @@ import Keys.{libraryDependencies, scalaVersion, _}
 import Dependencies._
 
 val scioVersion = "0.7.3"
-val beamVersion = "2.10.0"
+val beamVersion = "2.11.0"
 val circeVersion = "0.10.0"
+val jacksonVersion = "2.8.7"
 
 scalaVersion := "2.12.8"
 val scalaMacroVersion = "2.12.8"
@@ -28,7 +29,6 @@ lazy val macroSettings = Seq(
   addCompilerPlugin(paradiseDependency)
 )
 
-
 lazy val root: Project = project
   .in(file("."))
   .settings(commonSettings)
@@ -37,6 +37,11 @@ lazy val root: Project = project
     name := "kgdoc",
     description := "kgdoc",
     publish / skip := true,
+    dependencyOverrides ++= Seq(
+      "com.fasterxml.jackson.core" % "jackson-core" % jacksonVersion,
+      "com.fasterxml.jackson.core" % "jackson-databind" % jacksonVersion,
+      "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion
+    ),
     libraryDependencies ++= Seq(
       "com.spotify" %% "scio-core" % scioVersion,
       "com.spotify" %% "scio-extra" % scioVersion,
@@ -71,4 +76,3 @@ lazy val repl: Project = project
     publish / skip := true
   )
   .dependsOn(root)
-
