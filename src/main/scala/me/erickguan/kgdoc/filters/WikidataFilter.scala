@@ -7,9 +7,10 @@ object WikidataFilter {
     item.claims.forall(_._1 == property)
 
   val SubclassPropertyId = "P279"
+  val EntityType = "item"
 
   val entityFromDataValue: PartialFunction[DataValue, String] = {
-    case WikibaseEntityIdDataValue(_, numericId) => s"Q$numericId"
+    case WikibaseEntityIdDataValue(entityType, id) if entityType == EntityType => id
   }
 
   val entityFromOptionDataValue: PartialFunction[Option[DataValue], String] = {
@@ -30,7 +31,7 @@ object WikidataFilter {
       entityFromSnak(mainsnak)
   }
 
-  def isEntity(item: WikidataItem): Boolean = item.itemType == "item"
+  def isEntity(item: WikidataItem): Boolean = item.itemType == EntityType
 
   /**
     * Determines if an entity has certain predicate and object

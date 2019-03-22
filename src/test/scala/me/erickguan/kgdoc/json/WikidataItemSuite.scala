@@ -38,10 +38,10 @@ class WikidataItemSuite extends KgdocSuite {
   test("WikibaseEntityIdDataValue parsing works", Tag("parsing")) {
     val json = """{
                  |                                    "entity-type": "item",
-                 |                                    "numeric-id": 328
+                 |                                    "id": "Q328"
                  |                            }""".stripMargin
     val wdv = decode[WikibaseEntityIdDataValue](json)
-    assert(wdv == Right(WikibaseEntityIdDataValue("item", 328)))
+    assert(wdv == Right(WikibaseEntityIdDataValue("item", "Q328")))
   }
 
   test("GlobeCoordinateDataValue parsing works", Tag("parsing")) {
@@ -422,7 +422,7 @@ class WikidataItemSuite extends KgdocSuite {
                  |                    "type": "wikibase-entityid",
                  |                    "value": {
                  |                      "entity-type": "item",
-                 |                      "numeric-id": 14334357
+                 |                      "id": "Q14334357"
                  |                    }
                  |                  },
                  |                  "datatype": "wikibase-item"
@@ -450,7 +450,7 @@ class WikidataItemSuite extends KgdocSuite {
                  |                  "type": "wikibase-entityid",
                  |                  "value": {
                  |                    "entity-type": "item",
-                 |                    "numeric-id": 14334357
+                 |                    "id": "Q14334357"
                  |                  }
                  |                },
                  |                "datatype": "wikibase-item"
@@ -488,7 +488,7 @@ class WikidataItemSuite extends KgdocSuite {
                  |            "type": "wikibase-entityid",
                  |            "value": {
                  |              "entity-type": "item",
-                 |              "numeric-id": 3624078
+                 |              "id": "Q3624078"
                  |            }
                  |          },
                  |          "datatype": "wikibase-item"
@@ -528,7 +528,7 @@ class WikidataItemSuite extends KgdocSuite {
                  |            "type": "wikibase-entityid",
                  |            "value": {
                  |              "entity-type": "item",
-                 |              "numeric-id": 6256
+                 |              "id": "Q6256"
                  |            }
                  |          },
                  |          "datatype": "wikibase-item"
@@ -545,7 +545,7 @@ class WikidataItemSuite extends KgdocSuite {
                  |            "type": "wikibase-entityid",
                  |            "value": {
                  |              "entity-type": "item",
-                 |              "numeric-id": 185441
+                 |              "id": "Q185441"
                  |            }
                  |          },
                  |          "datatype": "wikibase-item"
@@ -585,7 +585,7 @@ class WikidataItemSuite extends KgdocSuite {
                  |            "type": "wikibase-entityid",
                  |            "value": {
                  |              "entity-type": "item",
-                 |              "numeric-id": 160016
+                 |              "id": "Q160016"
                  |            }
                  |          },
                  |          "datatype": "wikibase-item"
@@ -625,7 +625,7 @@ class WikidataItemSuite extends KgdocSuite {
                  |            "type": "wikibase-entityid",
                  |            "value": {
                  |              "entity-type": "item",
-                 |              "numeric-id": 6505795
+                 |              "id": "Q6505795"
                  |            }
                  |          },
                  |          "datatype": "wikibase-item"
@@ -665,7 +665,7 @@ class WikidataItemSuite extends KgdocSuite {
                  |            "type": "wikibase-entityid",
                  |            "value": {
                  |              "entity-type": "item",
-                 |              "numeric-id": 179164
+                 |              "id": "Q179164"
                  |            }
                  |          },
                  |          "datatype": "wikibase-item"

@@ -23,7 +23,7 @@ case class MonoLingualTextDataValue(language: String, text: String)
     extends DataValue
 @ConfiguredJsonCodec case class WikibaseEntityIdDataValue(
     @JsonKey("entity-type") entityType: String,
-    @JsonKey("numeric-id") numericId: Long
+    id: String
 ) extends DataValue
 object WikibaseEntityIdDataValue {
   implicit val config: Configuration = Configuration.default
