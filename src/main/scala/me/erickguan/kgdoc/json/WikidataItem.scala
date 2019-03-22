@@ -1,6 +1,5 @@
 package me.erickguan.kgdoc.json
 
-import scala.collection.mutable
 import io.circe.Decoder
 import io.circe.parser.decode
 import io.circe.generic.auto._
@@ -16,8 +15,8 @@ case class GlobeCoordinateDataValue(latitude: Double,
                                     globe: String)
     extends DataValue
 case class QuantityDataValue(amount: String,
-                             upperBound: String,
-                             lowerBound: String,
+                             upperBound: Option[String],
+                             lowerBound: Option[String],
                              unit: String)
     extends DataValue
 case class MonoLingualTextDataValue(language: String, text: String)
@@ -59,7 +58,7 @@ object DataValue {
 case class Snak(snaktype: String,
                 property: String,
                 datatype: String,
-                datavalue: DataValue)
+                datavalue: Option[DataValue])
 @ConfiguredJsonCodec case class Claim(
     @JsonKey("type") claimType: String,
     mainsnak: Snak,

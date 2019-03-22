@@ -12,11 +12,15 @@ object WikidataFilter {
     case WikibaseEntityIdDataValue(_, numericId) => s"Q$numericId"
   }
 
+  val entityFromOptionDataValue: PartialFunction[Option[DataValue], String] = {
+    case Some(dv) => entityFromDataValue(dv)
+  }
+
   val entityFromSnak: PartialFunction[Snak, String] = {
-    case Snak(_, _, datatype, datavalue)
-        if (datatype == "wikibase-item") && entityFromDataValue.isDefinedAt(
-          datavalue) =>
-      entityFromDataValue(datavalue)
+    case Snak(snaktype, _, datatype, datavalue)
+        if snaktype == "value" && datatype == "wikibase-item" && entityFromOptionDataValue
+          .isDefinedAt(datavalue) =>
+      entityFromOptionDataValue(datavalue)
   }
 
   val entityFromClaim: PartialFunction[Claim, String] = {

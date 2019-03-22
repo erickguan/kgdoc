@@ -73,8 +73,8 @@ class WikidataItemSuite extends KgdocSuite {
     assert(
       qdv === Right(
         QuantityDataValue("+10.38",
-                          "+10.375",
-                          "+10.385",
+                          Some("+10.375"),
+                          Some("+10.385"),
                           "http://www.wikidata.org/entity/Q712226")))
   }
 
@@ -148,8 +148,8 @@ class WikidataItemSuite extends KgdocSuite {
     assert(
       qdv === Right(
         QuantityDataValue("+10.38",
-                          "+10.375",
-                          "+10.385",
+                          Some("+10.375"),
+                          Some("+10.385"),
                           "http://www.wikidata.org/entity/Q712226")))
 
     val tJson =
@@ -188,7 +188,7 @@ class WikidataItemSuite extends KgdocSuite {
     val snak = decode[Snak](json)
     assert(
       snak === Right(
-        Snak("value", "P356", "string", StringDataValue("SomePicture.jpg"))))
+        Snak("value", "P356", "string", Some(StringDataValue("SomePicture.jpg")))))
   }
 
   test("Claim parsing works", Tag("parsing")) {
@@ -247,10 +247,10 @@ class WikidataItemSuite extends KgdocSuite {
         Snak("value",
              "P625",
              "globecoordinate",
-             GlobeCoordinateDataValue(40.67,
+             Some(GlobeCoordinateDataValue(40.67,
                                       -73.94,
                                       0.00027777777777778,
-                                      "http://www.wikidata.org/entity/Q2")),
+                                      "http://www.wikidata.org/entity/Q2"))),
         "normal",
         Some(Map(
           ("P580",
@@ -258,12 +258,12 @@ class WikidataItemSuite extends KgdocSuite {
              Snak("value",
                   "P580",
                   "time",
-                  TimeDataValue("+00000001994-01-01T00:00:00Z",
+                  Some(TimeDataValue("+00000001994-01-01T00:00:00Z",
                                 0,
                                 0,
                                 0,
                                 11,
-                                "http://www.wikidata.org/entity/Q1985727"))))))
+                                "http://www.wikidata.org/entity/Q1985727")))))))
       )))
   }
 
@@ -356,10 +356,10 @@ class WikidataItemSuite extends KgdocSuite {
       Snak("value",
            "P625",
            "globecoordinate",
-           GlobeCoordinateDataValue(40.67,
+           Some(GlobeCoordinateDataValue(40.67,
                                     -73.94,
                                     0.00027777777777778,
-                                    "http://www.wikidata.org/entity/Q2")),
+                                    "http://www.wikidata.org/entity/Q2"))),
       "normal",
       Some(Map(
         ("P580",
@@ -367,12 +367,12 @@ class WikidataItemSuite extends KgdocSuite {
            Snak("value",
                 "P580",
                 "time",
-                TimeDataValue("+00000001994-01-01T00:00:00Z",
+                Some(TimeDataValue("+00000001994-01-01T00:00:00Z",
                               0,
                               0,
                               0,
                               11,
-                              "http://www.wikidata.org/entity/Q1985727"))))))
+                              "http://www.wikidata.org/entity/Q1985727")))))))
     )
 
     val siteLink = SiteLink("dewiki", "New York City")

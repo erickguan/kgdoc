@@ -37,19 +37,22 @@ lazy val root: Project = project
     name := "kgdoc",
     description := "kgdoc",
     publish / skip := true,
-    dependencyOverrides ++= Seq(
-      "com.fasterxml.jackson.core" % "jackson-core" % jacksonVersion,
-      "com.fasterxml.jackson.core" % "jackson-databind" % jacksonVersion,
-      "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion
-    ),
+//    dependencyOverrides ++= Seq(
+//      "com.fasterxml.jackson.core" % "jackson-core" % jacksonVersion,
+//      "com.fasterxml.jackson.core" % "jackson-databind" % jacksonVersion,
+//      "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion
+//    ),
     libraryDependencies ++= Seq(
       "com.spotify" %% "scio-core" % scioVersion,
       "com.spotify" %% "scio-extra" % scioVersion,
       "com.spotify" %% "scio-test" % scioVersion % Test,
       "org.apache.beam" % "beam-runners-direct-java" % beamVersion,
       // optional dataflow runner
-      "org.apache.beam" % "beam-runners-spark" % beamVersion,
+      ("org.apache.beam" % "beam-runners-spark" % beamVersion)
+        .exclude("com.fasterxml.jackson.module", "jackson-module-scala_2.11"),
       //      "org.apache.beam" % "beam-runners-google-cloud-dataflow-java" % beamVersion,
+      "org.apache.spark" %% "spark-core" % "2.4.0",
+      "org.apache.spark" %% "spark-streaming" % "2.4.0",
       loggerLib % Compile,
       confLib % Compile,
       "io.circe" %% "circe-core" % circeVersion % Compile,
