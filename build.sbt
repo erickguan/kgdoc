@@ -3,7 +3,7 @@ import Keys.{libraryDependencies, scalaVersion, _}
 import Dependencies._
 
 val scioVersion = "0.7.3"
-val beamVersion = "2.11.0"
+val beamVersion = "2.10.0"
 val circeVersion = "0.10.0"
 val jacksonVersion = "2.8.7"
 

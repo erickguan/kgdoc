@@ -6,9 +6,10 @@ import me.erickguan.kgdoc.extractors.WikidataExtractor
 import me.erickguan.kgdoc.filters.WikidataFilter
 
 /* Usage:
-   `sbt "runMain me.erickguan.kgdoc.tasks.ExtractWikidataTriple
+   `SBT_OPTS="-Xms1G -Xmx4G -Xss2M" sbt "runMain me.erickguan.kgdoc.tasks.ExtractWikidataTriple
+    --runner=SparkRunner
     --checkpoint=/data/wikidata/triple_chk
-    --input=/data/wikidata
+    --input=/data/wikidata/wikidata-*-all.json
     --output=/data/wikidata/triple"`
  */
 object ExtractWikidataTriple {
