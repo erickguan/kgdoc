@@ -24,18 +24,12 @@ object ExtractWikidataLabel {
     val (entitiesSide, relationsSide) = h.entityAndRelationSideSet(triples)
 
     val bc = h.bibliographicClassesSideInput(classes)
-    h.filteredBibliographicClasses(items, bc)
+    val lang = h.filteredBibliographicClasses(items, bc)
       .flatMap { l =>
         WikidataExtractor
           .labelLiterals(l)
       }
-      .withSideInputs(entitiesSide.side, relationsSide.side)
-      .filter { (l, ctx) =>
-        val entities = ctx(entitiesSide.side)
-        val relations = ctx(relationsSide.side)
-        entities(l.item) || relations(l.item)
-      }
-      .toSCollection
+    h.filteredDataset(lang, entitiesSide.side, relationsSide.side)
       .map(ItemLangLiteral.repr(_))
       .saveAsTextFile(args("output"))
 

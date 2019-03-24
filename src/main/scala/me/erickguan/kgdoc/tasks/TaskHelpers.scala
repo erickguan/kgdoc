@@ -4,6 +4,7 @@ import java.nio.file.Paths
 
 import com.spotify.scio.ScioContext
 import com.spotify.scio.values.{SCollection, SideInput, SideSet}
+import me.erickguan.kgdoc.extractors.ItemLangLiteral
 import me.erickguan.kgdoc.filters.WikidataFilter
 import me.erickguan.kgdoc.json.WikidataItem
 import me.erickguan.kgdoc.processors.DatasetLineProcessor
@@ -54,7 +55,7 @@ class TaskHelpers(sc: ScioContext) {
   }
 
   /**
-    * Extracts a collection without bibliographic items
+    * Filter a collection without bibliographic items
     * wikicite data are too many now. we don't need it now
     * @param items all items collection
     * @param bcSide a side input including bibliographic items
@@ -68,6 +69,28 @@ class TaskHelpers(sc: ScioContext) {
       .filter { (item, ctx) =>
         val excludeClasses = ctx(bcSide)
         !WikidataFilter.byInstanceOfEntities(excludeClasses, item)
+      }
+      .toSCollection
+  }
+
+  /**
+    * Filter a collection without items in the given dataset
+    * @param items all items collection
+    * @param entitySide a side input including all entity id
+    * @param relationSide a side input including all relation id
+    * @return a collection filtered
+    */
+  def filteredDataset(
+      items: SCollection[ItemLangLiteral],
+      entitySide: SideInput[Set[String]],
+      relationSide: SideInput[Set[String]]
+  ): SCollection[ItemLangLiteral] = {
+    items
+      .withSideInputs(entitySide, relationSide)
+      .filter { (l, ctx) =>
+        val entities = ctx(entitySide)
+        val relations = ctx(relationSide)
+        entities(l.item) || relations(l.item)
       }
       .toSCollection
   }
