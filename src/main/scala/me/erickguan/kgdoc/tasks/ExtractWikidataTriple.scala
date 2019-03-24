@@ -1,9 +1,7 @@
 package me.erickguan.kgdoc.tasks
 
 import com.spotify.scio._
-import com.spotify.scio.extra.checkpoint._
 import me.erickguan.kgdoc.extractors.WikidataExtractor
-import me.erickguan.kgdoc.filters.WikidataFilter
 
 /* Usage:
    `SBT_OPTS="-Xms1G -Xmx4G -Xss2M" sbt "runMain me.erickguan.kgdoc.tasks.ExtractWikidataTriple
@@ -15,34 +13,15 @@ import me.erickguan.kgdoc.filters.WikidataFilter
 object ExtractWikidataTriple {
   def main(cmdlineArgs: Array[String]): Unit = {
     import me.erickguan.kgdoc.extractors.Triple
-    import me.erickguan.kgdoc.processors.WikidataJsonDumpLineProcessor
 
     val (sc, args) = ContextAndArgs(cmdlineArgs)
+    val h = new TaskHelpers(sc)
 
-    // Wikidata JSON dump keeps every records in a seperate line
-    val items = sc
-      .textFile(args("input"))
-      .filter(WikidataJsonDumpLineProcessor.filterNonItem)
-      .map(WikidataJsonDumpLineProcessor.decodeJsonLine)
+    val items = h.extractItems(args("input"))
+    val classes = h.extractClasses(items, args("checkpoint") + "-classes")
+    val bc = h.bibliographicClassesSideInput(classes)
 
-    val classes = sc.checkpoint(args("checkpoint") + "-classes") {
-      items.filter(
-        WikidataFilter.bySubclass(WikidataFilter.SubclassPropertyId, _))
-    }
-
-    // wikicite data are too many now. we don't need it now
-    val bibliographicClassesSideInput = classes
-      .filter(WikidataFilter.byBibliographicClass)
-      .map(_.id)
-      .asIterableSideInput
-
-    val facts = items
-      .withSideInputs(bibliographicClassesSideInput)
-      .filter { (item, ctx) =>
-        val excludeClasses = ctx(bibliographicClassesSideInput)
-        !WikidataFilter.byInstanceOfEntities(excludeClasses, item)
-      }
-      .toSCollection
+    val facts = h.filteredBibliographicClasses(items, bc)
       .flatMap { l =>
         WikidataExtractor
           .triples(l)

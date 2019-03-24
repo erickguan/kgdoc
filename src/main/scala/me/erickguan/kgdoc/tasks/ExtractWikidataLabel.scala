@@ -2,28 +2,41 @@ package me.erickguan.kgdoc.tasks
 
 import com.spotify.scio._
 import me.erickguan.kgdoc.extractors.WikidataExtractor
-import me.erickguan.kgdoc.processors.WikidataJsonDumpLineProcessor
 
 /* Usage:
    `sbt "runMain me.erickguan.kgdoc.tasks.ExtractWikidataLabel
-    --input=samples/wikidata-dump-*.json
-    --output=/tmp/wikidata"`
+    --runner=SparkRunner
+    --input=/data/wikidata/wikidata-dump-*.json.bz2
+    --checkpoint=/data/wikidata/triple_chk
+    --output=/data/wikidata/label"`
  */
 object ExtractWikidataLabel {
   def main(cmdlineArgs: Array[String]): Unit = {
     import me.erickguan.kgdoc.extractors.ItemLangLiteral
 
     val (sc, args) = ContextAndArgs(cmdlineArgs)
+    val h = new TaskHelpers(sc)
 
-    // Wikidata JSON dump keeps every records in a seperate line
-    val work = sc
-      .textFile(args("input"))
-      .filter(WikidataJsonDumpLineProcessor.filterNonItem)
-      .flatMap(
-        l =>
-          WikidataExtractor
-            .labelLiterals(WikidataJsonDumpLineProcessor.decodeJsonLine(l))
-            .map(ItemLangLiteral.repr(_)))
+    val items = h.extractItems(args("input"))
+    val classes = h.extractClasses(items, args("checkpoint") + "-classes")
+    val triples =
+      h.triplesFromDataset(args("dataset"), args("checkpoint") + "-dataset")
+    val (entitiesSide, relationsSide) = h.entityAndRelationSideSet(triples)
+
+    val bc = h.bibliographicClassesSideInput(classes)
+    h.filteredBibliographicClasses(items, bc)
+      .flatMap { l =>
+        WikidataExtractor
+          .labelLiterals(l)
+      }
+      .withSideInputs(entitiesSide.side, relationsSide.side)
+      .filter { (l, ctx) =>
+        val entities = ctx(entitiesSide.side)
+        val relations = ctx(relationsSide.side)
+        entities(l.item) || relations(l.item)
+      }
+      .toSCollection
+      .map(ItemLangLiteral.repr(_))
       .saveAsTextFile(args("output"))
 
     sc.close()
