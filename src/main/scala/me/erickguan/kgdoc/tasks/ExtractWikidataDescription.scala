@@ -4,14 +4,14 @@ import com.spotify.scio._
 import me.erickguan.kgdoc.extractors.WikidataExtractor
 
 /* Usage:
-   `sbt "runMain me.erickguan.kgdoc.tasks.ExtractWikidataLabel
+   `sbt "runMain me.erickguan.kgdoc.tasks.ExtractWikidataDescription
     --runner=SparkRunner
     --input=/data/wikidata/wikidata-dump-*.json.bz2
     --dataset=/data/wikidata/dataset
     --checkpoint=/data/wikidata/triple_chk
-    --output=/data/wikidata/label"`
+    --output=/data/wikidata/description"`
  */
-object ExtractWikidataLabel {
+object ExtractWikidataDescription {
   def main(cmdlineArgs: Array[String]): Unit = {
     import me.erickguan.kgdoc.extractors.ItemLangLiteral
 
@@ -28,7 +28,7 @@ object ExtractWikidataLabel {
     val lang = h.filteredBibliographicClasses(items, bc)
       .flatMap { l =>
         WikidataExtractor
-          .labelLiterals(l)
+          .descriptions(l)
       }
     h.filteredDataset(lang, entitiesSide.side, relationsSide.side)
       .map(ItemLangLiteral.repr(_))
