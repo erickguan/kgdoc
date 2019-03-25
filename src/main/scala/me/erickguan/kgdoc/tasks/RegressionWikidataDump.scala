@@ -3,7 +3,7 @@ package me.erickguan.kgdoc.tasks
 import com.spotify.scio._
 import com.spotify.scio.extra.checkpoint._
 import me.erickguan.kgdoc.extractors.WikidataExtractor
-import me.erickguan.kgdoc.filters.WikidataFilter
+import me.erickguan.kgdoc.filters.WikidataItemFilter
 
 /* Usage:
    `SBT_OPTS="-Xms1G -Xmx90G -Xss2M" sbt "runMain me.erickguan.kgdoc.tasks.RegressionWikidataDump

@@ -5,7 +5,7 @@ import java.nio.file.Paths
 import com.spotify.scio.ScioContext
 import com.spotify.scio.values.{SCollection, SideInput, SideSet}
 import me.erickguan.kgdoc.extractors.ItemLangLiteral
-import me.erickguan.kgdoc.filters.WikidataFilter
+import me.erickguan.kgdoc.filters.WikidataItemFilter
 import me.erickguan.kgdoc.json.WikidataItem
 import me.erickguan.kgdoc.processors.DatasetLineProcessor
 

@@ -22,14 +22,15 @@ object WikiSiteLink {
 
 object WikidataExtractor {
   def triples(item: WikidataItem): Iterable[Triple] = {
-    import me.erickguan.kgdoc.filters.WikidataFilter._
+    import me.erickguan.kgdoc.filters.WikidataItemFilter
 
+    val f = new WikidataItemFilter(item)
     for {
       (p, c) <- item.claims
-      if isEntity(item)
+      if f.isEntity
       claim <- c
-      if entityFromClaim.isDefinedAt(claim)
-    } yield Triple(item.id, p, entityFromClaim(claim))
+      if WikidataItemFilter.entityFromClaim.isDefinedAt(claim)
+    } yield Triple(item.id, p, WikidataItemFilter.entityFromClaim(claim))
   }
 
   def aliases(item: WikidataItem): Iterable[ItemLangLiteral] = {

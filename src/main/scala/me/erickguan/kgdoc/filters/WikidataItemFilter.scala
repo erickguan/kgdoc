@@ -2,12 +2,12 @@ package me.erickguan.kgdoc.filters
 
 import me.erickguan.kgdoc.json._
 
-object WikidataFilter {
-  def byProperty(property: String, item: WikidataItem): Boolean =
-    item.claims.forall(_._1 == property)
-
+object WikidataItemFilter {
   val SubclassPropertyId = "P279"
   val EntityType = "item"
+
+  val MetaBibliographicEntityIds = List("Q732577", "Q191067")
+  val InstanceOfPropertyId = "P31"
 
   val entityFromDataValue: PartialFunction[DataValue, String] = {
     case WikibaseEntityIdDataValue(entityType, id)
@@ -32,65 +32,65 @@ object WikidataFilter {
           .isDefinedAt(mainsnak) =>
       entityFromSnak(mainsnak)
   }
+}
 
-  def isEntity(item: WikidataItem): Boolean = item.itemType == EntityType
-
+class WikidataItemFilter(item: WikidataItem) {
   /**
-    * Determines if an entity has certain predicate and object
+    * Determines if the item has a property
     * @param propertyId property id in a claim
-    * @param objectEntityId object id in a claim
-    * @param item processed item
     * @return a boolean
     */
-  def byProperty(propertyId: String,
-                 objectEntityId: String,
-                 item: WikidataItem): Boolean =
+  def byProperty(propertyId: String): Boolean =
+    item.claims.forall(_._1 == propertyId)
+
+  def isEntity: Boolean = item.itemType == WikidataItemFilter.EntityType
+
+  /**
+    * Determines if the entity has certain predicate and object
+    * @param propertyId property id in a claim
+    * @param objectEntityId object id in a claim
+    * @return a boolean
+    */
+  def byProperty(propertyId: String, objectEntityId: String): Boolean =
     item.claims.get(propertyId) match {
       case Some(claims) =>
         claims.exists(
           c =>
-            entityFromClaim
-              .isDefinedAt(c) && entityFromClaim(c) == objectEntityId)
+            WikidataItemFilter.entityFromClaim
+              .isDefinedAt(c) && WikidataItemFilter
+              .entityFromClaim(c) == objectEntityId)
       case None => false
     }
 
   /**
-    * Determines if an entity is certain subclass of given parameter
+    * Determines if the entity is certain subclass of given parameter
     * @param subclassId subclass id in a claim
-    * @param item processed item
     * @return a boolean
     */
-  def bySubclass(subclassId: String, item: WikidataItem): Boolean =
-    byProperty(SubclassPropertyId, subclassId, item)
-
-  val MetaBibliographicEntityIds = List("Q732577", "Q191067")
-  val InstanceOfPropertyId = "P31"
+  def bySubclass(subclassId: String): Boolean =
+    byProperty(WikidataItemFilter.SubclassPropertyId, subclassId)
 
   /**
-    * Determines if an entity is certain instance of given parameter
+    * Determines if the entity is certain instance of given parameter
     * @param instanceId instance id in a claim
-    * @param item processed item
     * @return a boolean
     */
-  def byInstance(instanceId: String, item: WikidataItem): Boolean =
-    byProperty(InstanceOfPropertyId, instanceId, item)
+  def byInstance(instanceId: String): Boolean =
+    byProperty(WikidataItemFilter.InstanceOfPropertyId, instanceId)
 
   /**
     * Determines if an class entity is a subclass of bibliographic items
-    * @param item processed item
     * @return a boolean
     */
-  def byBibliographicClass(item: WikidataItem): Boolean =
-    MetaBibliographicEntityIds.exists(bySubclass(_, item))
+  def byBibliographicClass(): Boolean =
+    WikidataItemFilter.MetaBibliographicEntityIds.exists(bySubclass)
 
   /**
-    * Determines if an entity is a instance of these entities
+    * Determines if the entity is a instance of these entities
     * @param entityIds entity list
-    * @param item processed item
     * @return a boolean
     */
-  def byInstanceOfEntities(entityIds: Iterable[String],
-                           item: WikidataItem): Boolean =
-    entityIds.exists(byInstance(_, item))
+  def byInstanceOfEntities(entityIds: Iterable[String]): Boolean =
+    entityIds.exists(byInstance)
 
 }
