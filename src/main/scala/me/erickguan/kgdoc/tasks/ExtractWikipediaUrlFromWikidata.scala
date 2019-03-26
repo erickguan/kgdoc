@@ -30,9 +30,9 @@ object ExtractWikipediaUrlFromWikidata {
         WikidataExtractor
           .sitelinks(l)
       }
-    h.filteredDataset(lang, entitiesSide.side, relationsSide.side)
-      .map(ItemLangLiteral.repr(_))
-      .saveAsTextFile(args("output"))
+//    h.filteredDataset(lang, entitiesSide.side, relationsSide.side)
+//      .map(ItemLangLiteral.repr(_))
+//      .saveAsTextFile(args("output"))
 
     sc.close()
   }

@@ -8,8 +8,8 @@ import org.slf4j.LoggerFactory
    `SBT_OPTS="-Xms1G -Xmx4G -Xss2M" sbt "runMain me.erickguan.kgdoc.tasks.ExtractWikidataTriple
     --runner=SparkRunner
     --checkpoint=/data/wikidata/triple_chk
-    --input=/data/wikidata/wikidata-*-all.json
-    --output=/data/wikidata/triple"`
+    --input=/data/wikidata/wikidata-*-all.json.bz2
+    --output=/data/wikidata/triple2"`
  */
 object ExtractWikidataTriple {
   private val logger = LoggerFactory.getLogger(this.getClass)
