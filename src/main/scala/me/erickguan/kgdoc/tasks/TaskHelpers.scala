@@ -11,6 +11,7 @@ import me.erickguan.kgdoc.filters.{
 }
 import me.erickguan.kgdoc.json.WikidataItem
 import me.erickguan.kgdoc.processors.DatasetLineProcessor
+import org.apache.beam.sdk.metrics.Counter
 
 class TaskHelpers(sc: ScioContext) {
 
@@ -24,6 +25,24 @@ class TaskHelpers(sc: ScioContext) {
 
     sc.textFile(path)
       .filter(WikidataJsonDumpLineProcessor.filterNonItem)
+      .map(WikidataJsonDumpLineProcessor.decodeJsonLine)
+  }
+
+  /**
+    * Extracts all items from wikidata JSON dump with counting metrics.
+    * @param path path to a JSON dump
+    * @param counter a counter for counting the number of items
+    * @return a collection of wikidata items
+    */
+  def extractItems(path: String,
+                   counter: Counter): SCollection[WikidataItem] = {
+    import me.erickguan.kgdoc.processors.WikidataJsonDumpLineProcessor
+
+    sc.textFile(path)
+      .filter { i =>
+        counter.inc()
+        WikidataJsonDumpLineProcessor.filterNonItem(i)
+      }
       .map(WikidataJsonDumpLineProcessor.decodeJsonLine)
   }
 
@@ -74,6 +93,32 @@ class TaskHelpers(sc: ScioContext) {
       .filter { (item, ctx) =>
         val excludeClasses = ctx(bcSide)
         !new WikidataItemFilter(item).byInstanceOfEntities(excludeClasses)
+      }
+      .toSCollection
+  }
+
+  /**
+    * Filter a collection without bibliographic items with counter
+    * wikicite data are too many now. we don't need it now
+    * @param items all items collection
+    * @param bcSide a side input including bibliographic items
+    * @param counter a counter for number of dropped items
+    * @return a collection filtered
+    */
+  def filteredBibliographicClasses(
+      items: SCollection[WikidataItem],
+      bcSide: SideInput[Iterable[String]],
+      counter: Counter): SCollection[WikidataItem] = {
+    items
+      .withSideInputs(bcSide)
+      .filter { (item, ctx) =>
+        val excludeClasses = ctx(bcSide)
+        val result =
+          !new WikidataItemFilter(item).byInstanceOfEntities(excludeClasses)
+        if (!result) {
+          counter.inc()
+        }
+        result
       }
       .toSCollection
   }
