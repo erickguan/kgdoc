@@ -5,7 +5,10 @@ import java.nio.file.Paths
 import com.spotify.scio.ScioContext
 import com.spotify.scio.values.{SCollection, SideInput, SideSet}
 import me.erickguan.kgdoc.extractors.ItemLangLiteral
-import me.erickguan.kgdoc.filters.WikidataItemFilter
+import me.erickguan.kgdoc.filters.{
+  LatentFeatureModelDatasetFilter,
+  WikidataItemFilter
+}
 import me.erickguan.kgdoc.json.WikidataItem
 import me.erickguan.kgdoc.processors.DatasetLineProcessor
 
@@ -35,8 +38,10 @@ class TaskHelpers(sc: ScioContext) {
     import com.spotify.scio.extra.checkpoint._
 
     sc.checkpoint(checkpointPath) {
-      items.filter(
-        WikidataFilter.bySubclass(WikidataFilter.SubclassPropertyId, _))
+      items.filter { i =>
+        val h = new WikidataItemFilter(i)
+        h.bySubclass(WikidataItemFilter.SubclassPropertyId)
+      }
     }
   }
 
@@ -49,7 +54,7 @@ class TaskHelpers(sc: ScioContext) {
   def bibliographicClassesSideInput(
       classes: SCollection[WikidataItem]): SideInput[Iterable[String]] = {
     classes
-      .filter(WikidataFilter.byBibliographicClass)
+      .filter(new WikidataItemFilter(_).byBibliographicClass)
       .map(_.id)
       .asIterableSideInput
   }
@@ -68,7 +73,7 @@ class TaskHelpers(sc: ScioContext) {
       .withSideInputs(bcSide)
       .filter { (item, ctx) =>
         val excludeClasses = ctx(bcSide)
-        !WikidataFilter.byInstanceOfEntities(excludeClasses, item)
+        !new WikidataItemFilter(item).byInstanceOfEntities(excludeClasses)
       }
       .toSCollection
   }
@@ -128,6 +133,33 @@ class TaskHelpers(sc: ScioContext) {
     val relations = triples.map(_._2).toSideSet
 
     (entities, relations)
+  }
+
+  /**
+    * Remove deficit relations based on the threshold that considered to be enough
+    * @param triples all triples
+    * @param relationThreshold the number of items
+    * @return filtered triples
+    */
+  def removeDeficitRelation(
+      triples: SCollection[(String, String, String)],
+      relationThreshold: Long): SCollection[(String, String, String)] = {
+    val validRelationSide =
+      triples
+        .map(LatentFeatureModelDatasetFilter.relation)
+        .countByValue
+        .filter(LatentFeatureModelDatasetFilter
+          .applyThresholdOnRelation(_, relationThreshold))
+        .map(_._1)
+        .toSideSet
+
+    triples
+      .withSideInputs(validRelationSide.side)
+      .filter { (t, ctx) =>
+        val validRelation = ctx(validRelationSide.side)
+        validRelation(t._2)
+      }
+      .toSCollection
   }
 
 }
