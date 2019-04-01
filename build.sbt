@@ -59,6 +59,8 @@ lazy val root: Project = project
       "io.circe" %% "circe-generic" % circeVersion % Compile,
       "io.circe" %% "circe-generic-extras" % circeVersion % Compile,
       "io.circe" %% "circe-parser" % circeVersion % Compile,
+      "com.ibm.icu" % "icu4j" % "64.1" % Compile,
+      "com.github.tototoshi" %% "scala-csv" % "1.3.5" % Compile,
       "org.scalactic" %% "scalactic" % "3.0.5",
       "org.scalatest" %% "scalatest" % "3.0.5" % Test
     )

@@ -1,20 +1,20 @@
 package me.erickguan.kgdoc.tasks
 
 import com.spotify.scio._
-import me.erickguan.kgdoc.extractors.WikidataExtractor
+import me.erickguan.kgdoc.extractors.{WikiSiteLink, WikidataExtractor}
+import me.erickguan.kgdoc.filters.WikidataSiteLinkFilter
 
 /* Usage:
    `sbt "runMain me.erickguan.kgdoc.tasks.ExtractWikipediaUrlFromWikidata
-    --runner=SparkRunner
-    --input=/data/wikidata/wikidata-dump-*.json.bz2
+    --runner=DirectRunner
+    --input=/data/wikidata/wikidata-dump-*.json
+    --accepted_language=en,zh,sv
     --dataset=/data/wikidata/dataset
     --checkpoint=/data/wikidata/triple_chk
     --output=/data/wikidata/description"`
  */
 object ExtractWikipediaUrlFromWikidata {
   def main(cmdlineArgs: Array[String]): Unit = {
-    import me.erickguan.kgdoc.extractors.ItemLangLiteral
-
     val (sc, args) = ContextAndArgs(cmdlineArgs)
     val h = new TaskHelpers(sc)
 
@@ -25,14 +25,17 @@ object ExtractWikipediaUrlFromWikidata {
     val (entitiesSide, relationsSide) = h.entityAndRelationSideSet(triples)
 
     val bc = h.bibliographicClassesSideInput(classes)
-    val lang = h.filteredBibliographicClasses(items, bc)
-      .flatMap { l =>
-        WikidataExtractor
+    val noBibs = h.filteredBibliographicClasses(items, bc)
+    val ds = h.filteredDataset(noBibs, entitiesSide.side, relationsSide.side)
+    val languages: Set[String] = args("accepted_language").split(',').toSet
+    ds.flatMap { l =>
+        val links = WikidataExtractor
           .sitelinks(l)
+        WikidataSiteLinkFilter
+          .byLanguages(links, languages)
+          .map(WikiSiteLink.repr(_))
       }
-//    h.filteredDataset(lang, entitiesSide.side, relationsSide.side)
-//      .map(ItemLangLiteral.repr(_))
-//      .saveAsTextFile(args("output"))
+      .saveAsTextFile(args("output"))
 
     sc.close()
   }

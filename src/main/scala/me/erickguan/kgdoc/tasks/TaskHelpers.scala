@@ -131,16 +131,16 @@ class TaskHelpers(sc: ScioContext) {
     * @return a collection filtered
     */
   def filteredDataset(
-      items: SCollection[ItemLangLiteral],
+      items: SCollection[WikidataItem],
       entitySide: SideInput[Set[String]],
       relationSide: SideInput[Set[String]]
-  ): SCollection[ItemLangLiteral] = {
+  ): SCollection[WikidataItem] = {
     items
       .withSideInputs(entitySide, relationSide)
       .filter { (l, ctx) =>
         val entities = ctx(entitySide)
         val relations = ctx(relationSide)
-        entities(l.item) || relations(l.item)
+        entities(l.id) || relations(l.id)
       }
       .toSCollection
   }

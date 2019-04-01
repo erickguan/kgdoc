@@ -6,7 +6,9 @@ import me.erickguan.kgdoc.filters.LatentFeatureModelDatasetFilter
 import me.erickguan.kgdoc.processors.DatasetLineProcessor
 
 /**
- * Cleansing data is important. We remove relations and insufficient things accordingly
+ * TODO: python script runs well now (under 128G memory, 3h, single thread). so I don't have the need to continue on this branch.
+  *
+  * Cleansing data is important. We remove relations and insufficient things accordingly
     Usage:
    `sbt "runMain me.erickguan.kgdoc.tasks.BuildLatentFeatureModelDataset
     --runner=SparkRunner
