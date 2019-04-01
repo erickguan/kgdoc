@@ -2,6 +2,7 @@ package me.erickguan.kgdoc.tasks
 
 import com.spotify.scio._
 import me.erickguan.kgdoc.extractors.WikidataExtractor
+import me.erickguan.kgdoc.filters.WikidataSiteFilter
 
 /* Usage:
    `sbt "runMain me.erickguan.kgdoc.tasks.ExtractWikidataDescription
@@ -23,13 +24,16 @@ object ExtractWikidataDescription {
     val triples =
       h.triplesFromDataset(args("dataset"), args("checkpoint") + "-dataset")
     val (entitiesSide, relationsSide) = h.entityAndRelationSideSet(triples)
+    val languages: Set[String] = args("accepted_language").split(',').toSet
 
     val bc = h.bibliographicClassesSideInput(classes)
     val lang = h.filteredBibliographicClasses(items, bc)
     h.filteredDataset(lang, entitiesSide.side, relationsSide.side)
       .flatMap { l =>
-        WikidataExtractor
+        val literals = WikidataExtractor
           .descriptions(l)
+        WikidataSiteFilter
+          .literalByLanguages(literals, languages)
           .map(ItemLangLiteral.repr(_))
       }
       .saveAsTextFile(args("output"))

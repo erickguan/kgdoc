@@ -2,7 +2,7 @@ package me.erickguan.kgdoc.tasks
 
 import com.spotify.scio._
 import me.erickguan.kgdoc.extractors.{WikiSiteLink, WikidataExtractor}
-import me.erickguan.kgdoc.filters.WikidataSiteLinkFilter
+import me.erickguan.kgdoc.filters.WikidataSiteFilter
 
 /* Usage:
    `sbt "runMain me.erickguan.kgdoc.tasks.ExtractWikipediaUrlFromWikidata
@@ -31,7 +31,7 @@ object ExtractWikipediaUrlFromWikidata {
     ds.flatMap { l =>
         val links = WikidataExtractor
           .sitelinks(l)
-        WikidataSiteLinkFilter
+        WikidataSiteFilter
           .byLanguages(links, languages)
           .map(WikiSiteLink.repr(_))
       }
