@@ -1,25 +1,13 @@
 package me.erickguan.kgdoc.filters
 
-import com.github.tototoshi.csv.CSVReader
 import com.ibm.icu.util.ULocale
 import me.erickguan.kgdoc.extractors.{ItemLangLiteral, WikiSiteLink}
-import me.erickguan.kgdoc.json.SiteLink
-
-import scala.io.Source
+import me.erickguan.kgdoc.processors.WikiSite
 
 object WikidataSiteFilter {
-  // language in Wikidata is different than site identifier
-  private def loadWikiSitesCSV(): Map[String, Iterable[Map[String, String]]] = {
-    val source =
-      Source.fromURL(getClass.getResource("/generated/wikisites.csv"))
-    CSVReader.open(source).allWithHeaders.groupBy(f => f("lang"))
-  }
-  lazy val wikiSites: Map[String, Iterable[Map[String, String]]] =
-    loadWikiSitesCSV()
-
   def langToSites(lang: String, code: String): Iterable[String] = {
     try {
-      wikiSites(lang).filter(_("code") == code).map(_("dbname"))
+      WikiSite.byLanguage(lang).filter(_("code") == code).map(_("dbname"))
     } catch {
       case _: Throwable => List()
     }

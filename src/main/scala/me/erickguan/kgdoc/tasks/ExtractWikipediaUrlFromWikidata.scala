@@ -33,7 +33,7 @@ object ExtractWikipediaUrlFromWikidata {
           .sitelinks(l)
         WikidataSiteFilter
           .byLanguages(links, languages)
-          .map(WikiSiteLink.repr(_))
+          .flatMap(WikiSiteLink.repr(_))
       }
       .saveAsTextFile(args("output"))
 

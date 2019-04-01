@@ -1,6 +1,7 @@
 package me.erickguan.kgdoc.extractors
 
 import me.erickguan.kgdoc.json._
+import me.erickguan.kgdoc.processors.WikiSite
 
 case class Triple(subject: String, predicate: String, `object`: String)
 case class ItemLangLiteral(item: String, literal: String, lang: String)
@@ -15,8 +16,9 @@ object ItemLangLiteral {
 }
 
 object WikiSiteLink {
-  def repr(l: WikiSiteLink, separator: Char = '\t'): String = {
-    s"${l.item}$separator${l.site}$separator${l.title}"
+  def repr(l: WikiSiteLink, separator: Char = '\t'): Iterable[String] = {
+    for { url <- WikiSite.url(l.site, l.title) } yield
+      s"${l.item}$separator$url"
   }
 }
 
