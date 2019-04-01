@@ -26,12 +26,12 @@ object ExtractWikidataDescription {
 
     val bc = h.bibliographicClassesSideInput(classes)
     val lang = h.filteredBibliographicClasses(items, bc)
+    h.filteredDataset(lang, entitiesSide.side, relationsSide.side)
       .flatMap { l =>
         WikidataExtractor
           .descriptions(l)
+          .map(ItemLangLiteral.repr(_))
       }
-    h.filteredDataset(lang, entitiesSide.side, relationsSide.side)
-      .map(ItemLangLiteral.repr(_))
       .saveAsTextFile(args("output"))
 
     sc.close()
