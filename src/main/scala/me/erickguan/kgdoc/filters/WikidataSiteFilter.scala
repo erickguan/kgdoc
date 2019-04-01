@@ -21,7 +21,7 @@ object WikidataSiteFilter {
     try {
       wikiSites(lang).filter(_("code") == code).map(_("dbname"))
     } catch {
-      List()
+      case _: Throwable => List()
     }
   }
 
