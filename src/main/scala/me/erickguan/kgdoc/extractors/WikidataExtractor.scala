@@ -18,7 +18,7 @@ object ItemLangLiteral {
 object WikiSiteLink {
   def repr(l: WikiSiteLink, separator: Char = '\t'): Iterable[String] = {
     for { url <- WikiSite.url(l.site, l.title) } yield
-      s"${l.item}$separator$url"
+      s"${l.item}$separator${l.site}$separator${l.title}$separator$url"
   }
 }
 

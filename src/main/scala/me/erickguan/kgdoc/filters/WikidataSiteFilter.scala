@@ -7,7 +7,7 @@ import me.erickguan.kgdoc.processors.WikiSite
 object WikidataSiteFilter {
   def langToSites(lang: String, code: String): Iterable[String] = {
     try {
-      WikiSite.byLanguage(lang).filter(_("code") == code).map(_("dbname"))
+      WikiSite.byLanguage(lang).filter(_.code == code).map(_.dbname)
     } catch {
       case _: Throwable => List()
     }

@@ -25,7 +25,6 @@ def gen_siteitem(json_response):
   """a generator yields the new data structure."""
   for k, v in json_response.items():
     if not isinstance(v, dict): continue
-    code = v['code']
     sites = v['site']
     localname = v['localname']
     for site in sites:
@@ -34,7 +33,7 @@ def gen_siteitem(json_response):
       code = site['code']
       lang = site['lang']
       name = localname + " " + site['sitename']
-      yield {"name": name, "code": code, "url": url, "dbname": dbname, "code": code, "lang": lang}
+      yield {"name": name, "url": url, "dbname": dbname, "code": code, "lang": lang}
 
 
 if __name__ == "__main__":
@@ -42,7 +41,7 @@ if __name__ == "__main__":
   items = gen_siteitem(r)
   p = Path.cwd() / 'src/main/resources/generated' / 'wikisites.csv'
   with p.open('w') as f:
-    fieldnames = ['name', 'code', 'url', 'dbname', 'code', 'lang']
+    fieldnames = ['name', 'url', 'dbname', 'code', 'lang']
     writer = csv.DictWriter(f, fieldnames=fieldnames)
     writer.writeheader()
     for row in items:

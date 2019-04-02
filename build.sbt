@@ -6,6 +6,7 @@ val scioVersion = "0.7.4"
 val beamVersion = "2.11.0"
 val circeVersion = "0.10.0"
 val jacksonVersion = "2.8.7"
+val kantanCsvVersion = "0.5.0"
 
 scalaVersion := "2.12.8"
 val scalaMacroVersion = "2.12.8"
@@ -60,7 +61,8 @@ lazy val root: Project = project
       "io.circe" %% "circe-generic-extras" % circeVersion % Compile,
       "io.circe" %% "circe-parser" % circeVersion % Compile,
       "com.ibm.icu" % "icu4j" % "64.1" % Compile,
-      "com.github.tototoshi" %% "scala-csv" % "1.3.5" % Compile,
+      "com.nrinaudo" %% "kantan.csv" % kantanCsvVersion % Compile,
+      "com.nrinaudo" %% "kantan.csv-generic" % kantanCsvVersion % Compile,
       "org.scalactic" %% "scalactic" % "3.0.5",
       "org.scalatest" %% "scalatest" % "3.0.5" % Test
     )
