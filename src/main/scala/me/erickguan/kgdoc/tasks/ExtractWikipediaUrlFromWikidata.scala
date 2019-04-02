@@ -27,7 +27,7 @@ object ExtractWikipediaUrlFromWikidata {
     val bc = h.bibliographicClassesSideInput(classes)
     val noBibs = h.filteredBibliographicClasses(items, bc)
     val ds = h.filteredDataset(noBibs, entitiesSide.side, relationsSide.side)
-    val languages: Set[String] = args("accepted_language").split(',').toSet
+    val languages: Set[String] = args.list("accepted_language").toSet
     ds.flatMap { l =>
         val links = WikidataExtractor
           .sitelinks(l)

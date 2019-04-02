@@ -25,7 +25,7 @@ object ExtractWikidataLabel {
     val triples =
       h.triplesFromDataset(args("dataset"), args("checkpoint") + "-dataset")
     val (entitiesSide, relationsSide) = h.entityAndRelationSideSet(triples)
-    val languages: Set[String] = args("accepted_language").split(',').toSet
+    val languages: Set[String] = args.list("accepted_language").toSet
 
     val bc = h.bibliographicClassesSideInput(classes)
     val lang = h.filteredBibliographicClasses(items, bc)
