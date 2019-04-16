@@ -100,11 +100,19 @@ def download_qid_summary():
     while len(r) != 0:
       try:
         r = c.fetchmany()
-        batch_download_summary(DB_INFO, r)
+        p.submit(batch_download_summary, DB_INFO, r)
           # fut.result()
       except:
         continue
     conn.close()
+
+
+def drop_summaries():
+  conn = psycopg2.connect(DB_INFO)
+  c = conn.cursor()
+
+  c.execute('''DROP TABLE IF EXISTS summaries;''')
+  conn.commit()
 
 
 if __name__ == '__main__':
@@ -115,5 +123,7 @@ if __name__ == '__main__':
     download_summary(sys.argv[2])
   elif sys.argv[1] == "summary_for_qid":
     download_qid_summary()
+  elif sys.argv[1] == "drop_summaries":
+    drop_summaries()
   else:
     load_wikipedia_list(sys.argv[1])
