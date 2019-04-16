@@ -5,6 +5,7 @@ import traceback
 from urllib.parse import urlparse
 import wikipediaapi
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+from multiprocessing import Pool
 import psycopg2
 
 # psql -U postgres -h 172.19.0.3 -p 5432 -d wikidata
@@ -93,15 +94,18 @@ def download_qid_summary():
   c.execute('''CREATE UNIQUE INDEX IF NOT EXISTS summaries_idx_on_qid_site ON summaries(qid, site);''')
   conn.commit()
 
+  c = conn.cursor("fetch_urls")
   c.execute('SELECT * FROM urls;')
 
-  with ProcessPoolExecutor(max_workers=30) as p:
+# ProcessPool is such a terrible idea...
+#  with ProcessPoolExecutor(max_workers=30) as p:
+  with Pool(processes=30) as pool:
     r = [0]
     while len(r) != 0:
       try:
         r = c.fetchmany()
-        p.submit(batch_download_summary, DB_INFO, r)
-          # fut.result()
+#      p.submit(batch_download_summary, DB_INFO, r)
+        pool.apply_async(batch_download_summary, DB_INFO, r)
       except:
         continue
     conn.close()
