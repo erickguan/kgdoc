@@ -5,37 +5,48 @@ import traceback
 from urllib.parse import urlparse
 import wikipediaapi
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+import psycopg2
 
-
-DB_NAME = 'test.db'# 'download_urls.db'
+# psql -U postgres -h 172.19.0.3 -p 5432 -d wikidata
+DB_INFO = "dbname='wikidata' user='postgres' host='172.19.0.3' port='5432'"
 
 def load_wikipedia_list(filename):
   lazynlp.dedup_lines_from_new_file([filename], new_file, outfile)
 
 def extract_qid(filename):
-  import sqlite3
-  conn = sqlite3.connect(DB_NAME)
+  conn = psycopg2.connect(DB_INFO)
   c = conn.cursor()
 
   c.execute('''CREATE TABLE IF NOT EXISTS urls
-              (qid text, site text, url text);''')
+              (qid INT, site TEXT, url TEXT);''')
   c.execute('''CREATE INDEX IF NOT EXISTS urls_idx_on_qid ON urls(qid);''')
-  c.execute('''CREATE INDEX IF NOT EXISTS urls_idx_on_qid_site ON urls(qid, site);''')
+  c.execute('''CREATE UNIQUE INDEX IF NOT EXISTS urls_idx_on_qid_site ON urls(qid, site);''')
   conn.commit()
+
+  c = conn.cursor()
 
   available_sites = set(["en", "zh", "sv"])
 
+  i = 0
   with open(filename, 'r') as f:
     for l in f:
       try:
         s = l.rstrip().split('\t')
         q_id, url = s
         site = url[8:].split('.')[0]
+        q_id = int(q_id[1:])
         if site in available_sites:
-          c.execute(f"INSERT INTO urls VALUES ('{q_id}','{site}','{url}')")
+          c.execute("INSERT INTO urls (qid, site, url) VALUES (%s, %s, %s);", (q_id, site, url))
+          i += 1
       except:
         print(traceback.print_exc())
         continue
+
+      if i > 1000:
+        i = 0
+        conn.commit()
+        c = conn.cursor()
+
 
 def download_wp_url(url):
   # https://en.wikipedia.org/wiki/Maltolt
@@ -59,40 +70,41 @@ def populate_summary(r):
   return qid, site, summary
 
 def batch_download_summary(db_name, batch):
-  import sqlite3
+  try:
+    with ThreadPoolExecutor(max_workers=32) as t:
+      res = [r for r in t.map(populate_summary, batch)]
 
-  with ThreadPoolExecutor(max_workers=1) as t:
-    print(batch)
-    res = [r for r in t.map(populate_summary, batch)]
-
-    print(res)
-    conn = sqlite3.connect(db_name)
-    c = conn.cursor()
-    for qid, site, summary in res:
-      c.execute('''INSERT INTO summaries VALUES (?, ?, ?);''', (qid, site, summary))
-    conn.commit()
-    conn.close()
+      conn = psycopg2.connect(DB_INFO)
+      c = conn.cursor()
+      for qid, site, summary in res:
+        c.execute('''INSERT INTO summaries VALUES (%s, %s, %s);''', (qid, site, summary))
+      conn.commit()
+      conn.close()
+  except:
+    return
 
 def download_qid_summary():
-  import sqlite3
-  conn = sqlite3.connect(DB_NAME)
+  conn = psycopg2.connect(DB_INFO)
   c = conn.cursor()
 
   c.execute('''CREATE TABLE IF NOT EXISTS summaries
-              (qid text, site text, summary text);''')
+              (qid INT, site TEXT, summary TEXT);''')
   c.execute('''CREATE INDEX IF NOT EXISTS summaries_idx_on_qid ON summaries(qid);''')
-  c.execute('''CREATE INDEX IF NOT EXISTS summaries_idx_on_qid_site ON summaries(qid, site);''')
+  c.execute('''CREATE UNIQUE INDEX IF NOT EXISTS summaries_idx_on_qid_site ON summaries(qid, site);''')
   conn.commit()
 
   c.execute('SELECT * FROM urls;')
 
-  # with ProcessPoolExecutor(max_workers=1) as p:
-  r = [0]
-  while len(r) != 0:
-    r = c.fetchmany()
-    batch_download_summary(DB_NAME, r)
-      # fut.result()
-  conn.close()
+  with ProcessPoolExecutor(max_workers=30) as p:
+    r = [0]
+    while len(r) != 0:
+      try:
+        r = c.fetchmany()
+        batch_download_summary(DB_INFO, r)
+          # fut.result()
+      except:
+        continue
+    conn.close()
 
 
 if __name__ == '__main__':
