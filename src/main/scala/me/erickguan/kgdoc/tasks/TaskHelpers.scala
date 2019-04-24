@@ -10,6 +10,7 @@ import me.erickguan.kgdoc.filters.{
   WikidataItemFilter
 }
 import me.erickguan.kgdoc.json.WikidataItem
+import me.erickguan.kgdoc.pb.tripleindex.Translation
 import me.erickguan.kgdoc.processors.DatasetLineProcessor
 import org.apache.beam.sdk.metrics.Counter
 
@@ -169,7 +170,7 @@ class TaskHelpers(sc: ScioContext) {
 
   /**
     * Extracts entities and relations from triples collection
-    * @param classes all classes from Wikidata
+    * @param triples all classes from Wikidata
     * @return two side sets for entities and relations
     */
   def entityAndRelationSideSet(triples: SCollection[(String, String, String)])
@@ -178,6 +179,20 @@ class TaskHelpers(sc: ScioContext) {
     val relations = triples.map(_._2).toSideSet
 
     (entities, relations)
+  }
+
+  /**
+    * Filter a collection from indexed dataset
+    * @param translation Translation imported
+    * @return two side sets for entities and relations in text
+    */
+  def entityAndRelationSideSetFromTranslation(
+      translation: Translation): (SideSet[String], SideSet[String]) = {
+
+    val ents = sc.parallelize(translation.entities).map(_.element).toSideSet
+    val rels = sc.parallelize(translation.relations).map(_.element).toSideSet
+
+    (ents, rels)
   }
 
   /**

@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+option java_package = "me.erickguan.kgdoc.pb";
+
+message TranslationUnit {
+  string element = 1;
+  uint64 index = 2;
+}
+
+message Translation {
+  repeated TranslationUnit entities = 1;
+  repeated TranslationUnit relations = 2;
+}

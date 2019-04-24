@@ -2,6 +2,8 @@ import sbt._
 import Keys.{libraryDependencies, scalaVersion, _}
 import Dependencies._
 
+import scala.sys.process.Process
+
 val scioVersion = "0.7.4"
 val beamVersion = "2.11.0"
 val circeVersion = "0.10.0"
@@ -64,10 +66,17 @@ lazy val root: Project = project
       "com.nrinaudo" %% "kantan.csv" % kantanCsvVersion % Compile,
       "com.nrinaudo" %% "kantan.csv-generic" % kantanCsvVersion % Compile,
       "org.scalactic" %% "scalactic" % "3.0.5",
-      "org.scalatest" %% "scalatest" % "3.0.5" % Test
+      "org.scalatest" %% "scalatest" % "3.0.5" % Test,
+      "com.thesamet.scalapb" %% "scalapb-runtime" % "0.9.0-M3" % "protobuf"
     )
   )
   .enablePlugins(PackPlugin)
+
+PB.targets in Compile := Seq(
+  scalapb.gen() -> (sourceManaged in Compile).value
+)
+PB.protocVersion := "-v371"
+PB.runProtoc in Compile := (args => Process("protoc", args)!)
 
 lazy val repl: Project = project
   .in(file(".repl"))
