@@ -8,8 +8,9 @@ import me.erickguan.kgdoc.pb.tripleindex.Translation
 /*
  * better to use for Text literals
   Usage:
-   `sbt "runMain me.erickguan.kgdoc.tasks.ExtractWikidataLabel
+   `SBT_OPTS="-Xms1G -Xmx40G -Xss2M" sbt "runMain me.erickguan.kgdoc.tasks.MatchTripleBinaryLiterals
     --runner=SparkRunner
+    --dataset=/data/wikidata/dataset
     --input=/data/wikidata/wikidata-labels.txt
     --output=/data/wikidata/dataset/labels.txt
     --accepted_language=en,zh-hans,zh-cn,zh-hant,zh-tw,sv
@@ -22,7 +23,7 @@ object MatchTripleBinaryLiterals {
     val (entities, relations) = h.entityAndRelationSideSetFromTranslation(
       Translation.parseFrom(
         new FileInputStream(args("dataset") + "translation.protobuf")))
-    val acceptedLanguage = args("accepted_language").split(',').toSet
+    val acceptedLanguage = args("accepted_language").toSet
 
     sc.textFile(args("input"))
       .map(_.split('\t'))
