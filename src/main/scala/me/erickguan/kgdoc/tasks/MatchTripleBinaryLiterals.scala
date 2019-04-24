@@ -23,7 +23,7 @@ object MatchTripleBinaryLiterals {
     val (entities, relations) = h.entityAndRelationSideSetFromTranslation(
       Translation.parseFrom(
         new FileInputStream(args("dataset") + "translation.protobuf")))
-    val acceptedLanguage = args("accepted_language").toSet
+    val acceptedLanguage = args.list("accepted_language").toSet
 
     sc.textFile(args("input"))
       .map(_.split('\t'))
