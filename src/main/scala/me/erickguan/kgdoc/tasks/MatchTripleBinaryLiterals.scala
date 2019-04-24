@@ -8,7 +8,7 @@ import me.erickguan.kgdoc.pb.tripleindex.Translation
 /*
  * better to use for Text literals
   Usage:
-   `SBT_OPTS="-Xms1G -Xmx40G -Xss2M" sbt "runMain me.erickguan.kgdoc.tasks.MatchTripleBinaryLiterals
+   `SBT_OPTS="-Xms1G -Xmx8G -Xss2M" sbt "runMain me.erickguan.kgdoc.tasks.MatchTripleBinaryLiterals
     --runner=SparkRunner
     --dataset=/data/wikidata/dataset
     --input=/data/wikidata/wikidata-labels.txt
@@ -26,12 +26,12 @@ object MatchTripleBinaryLiterals {
     val acceptedLanguage = args.list("accepted_language").toSet
 
     sc.textFile(args("input"))
-      .map(_.split('\t'))
       .withSideInputs(entities.side)
       .filter { (l, ctx) =>
+        val t = l.split('\t')
         val ents = ctx(entities.side)
 
-        ents(l.head) && l.tail
+        ents(t.head) && t.tail
           .mkString("\t")
           .split('@')
           .tail
