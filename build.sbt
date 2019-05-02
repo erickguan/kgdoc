@@ -51,12 +51,12 @@ lazy val root: Project = project
       "com.spotify" %% "scio-test" % scioVersion % Test,
       "org.apache.beam" % "beam-runners-direct-java" % beamVersion,
       // optional dataflow runner
-      ("org.apache.beam" % "beam-runners-spark" % beamVersion)
-        .exclude("com.fasterxml.jackson.module", "jackson-module-scala_2.11"),
-      //      "org.apache.beam" % "beam-runners-google-cloud-dataflow-java" % beamVersion,
-      "org.apache.spark" %% "spark-core" % "2.4.0",
-      "org.apache.spark" %% "spark-streaming" % "2.4.0",
-      loggerLib % Compile,
+//      ("org.apache.beam" % "beam-runners-spark" % beamVersion)
+//        .exclude("com.fasterxml.jackson.module", "jackson-module-scala_2.11"),
+//      "org.apache.spark" %% "spark-core" % "2.4.0",
+//      "org.apache.spark" %% "spark-streaming" % "2.4.0",
+      "org.apache.beam" % "beam-runners-google-cloud-dataflow-java" % beamVersion,
+      //      loggerLib % Compile,
       confLib % Compile,
       "io.circe" %% "circe-core" % circeVersion % Compile,
       "io.circe" %% "circe-generic" % circeVersion % Compile,
@@ -67,8 +67,12 @@ lazy val root: Project = project
       "com.nrinaudo" %% "kantan.csv-generic" % kantanCsvVersion % Compile,
       "org.scalactic" %% "scalactic" % "3.0.5",
       "org.scalatest" %% "scalatest" % "3.0.5" % Test,
-      "com.thesamet.scalapb" %% "scalapb-runtime" % "0.9.0-M3" % "protobuf"
+      "com.thesamet.scalapb" %% "scalapb-runtime" % "0.9.0-M3" % "protobuf",
+      "org.slf4j" % "slf4j-simple" % "1.7.26"
     )
+//    excludeDependencies ++= Seq(
+//      ExclusionRule("log4j", "log4j")
+//    )
   )
   .enablePlugins(PackPlugin)
 
