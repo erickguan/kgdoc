@@ -10,7 +10,6 @@ import me.erickguan.kgdoc.filters.{
   WikidataItemFilter
 }
 import me.erickguan.kgdoc.json.WikidataItem
-import me.erickguan.kgdoc.pb.tripleindex.Translation
 import me.erickguan.kgdoc.processors.DatasetLineProcessor
 import org.apache.beam.sdk.metrics.Counter
 
@@ -150,7 +149,7 @@ class TaskHelpers(sc: ScioContext) {
 
   /**
     * Extracts triples from a dataset.
-    * @param classes all classes from Wikidata
+    * @param datasetPath a path to dataset
     * @param checkpointPath a path to checkpoint
     * @return a (s, p, o) tuple of data
     */
@@ -160,12 +159,25 @@ class TaskHelpers(sc: ScioContext) {
     import com.spotify.scio.extra.checkpoint._
 
     val tripleSources = DatasetFiles.map { n =>
-      sc.textFile(Paths.get(datasetPath, n).toString)
+      sc.textFile(datasetPath + n)
         .map(DatasetLineProcessor.decodeLine(_))
     }
     sc.checkpoint(checkpointPath + "-dataset") {
       sc.unionAll(tripleSources)
     }
+  }
+
+  /**
+    * Extracts entities from a plain text translation file.
+    * @param datasetPath a path to dataset
+    * @return a side set of entities
+    */
+  def entitiesFromPlaintextTranslation(datasetPath: String): SideSet[String] = {
+    val EntityTranslationFile = "entities.txt"
+
+    sc.textFile(datasetPath + EntityTranslationFile)
+      .map(_.split('\t').head)
+      .toSideSet
   }
 
   /**
@@ -179,20 +191,6 @@ class TaskHelpers(sc: ScioContext) {
     val relations = triples.map(_._2).toSideSet
 
     (entities, relations)
-  }
-
-  /**
-    * Filter a collection from indexed dataset
-    * @param translation Translation imported
-    * @return two side sets for entities and relations in text
-    */
-  def entityAndRelationSideSetFromTranslation(
-      translation: Translation): (SideSet[String], SideSet[String]) = {
-
-    val ents = sc.parallelize(translation.entities).map(_.element).toSideSet
-    val rels = sc.parallelize(translation.relations).map(_.element).toSideSet
-
-    (ents, rels)
   }
 
   /**
