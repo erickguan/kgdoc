@@ -178,7 +178,7 @@ class TaskHelpers(sc: ScioContext) {
     sc.textFile(datasetPath + EntityTranslationFile)
       .map { l =>
         val spans = l.split('\t')
-        (spans(0), spans(1).asInstanceOf[Long]) // we only have two elements there
+        (spans(0), spans(1).toLong) // we only have two elements there
       }
       .asMapSideInput
   }

@@ -6,11 +6,11 @@ import org.slf4j.LoggerFactory
 
 /* Usage:
    `SBT_OPTS="-Xms1G -Xmx4G -Xss2M" sbt "runMain me.erickguan.kgdoc.tasks.ExtractSelectedWikidataTriple
-    --runner=SparkRunner
-    --checkpoint=/data/wikidata/triple_chk
-    --input=/data/wikidata/wikidata-*.txt
-    --selected=/data/wikidata/movie_dataset/selected_triples.txt
-    --output=/data/wikidata/movie_dataset"`
+    --runner=DataflowRunner
+    --checkpoint=gs://wikidata-research-fantasticfears/triple_chk
+    --input=gs://wikidata-research-fantasticfears/wikidata-*-all.json
+    --selected=gs://wikidata-research-fantasticfears/movie_dataset/selected_entities.txt
+    --output=gs://wikidata-research-fantasticfears/wikidata/movie_dataset"`
  */
 object ExtractSelectedWikidataTriple {
   private val logger = LoggerFactory.getLogger(this.getClass)
