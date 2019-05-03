@@ -170,14 +170,17 @@ class TaskHelpers(sc: ScioContext) {
   /**
     * Extracts entities from a plain text translation file.
     * @param datasetPath a path to dataset
-    * @return a side set of entities
+    * @return a iterable side input of entities map
     */
-  def entitiesFromPlaintextTranslation(datasetPath: String): SideSet[String] = {
+  def entitiesFromPlaintextTranslation(datasetPath: String): SideInput[Map[String, Long]] = {
     val EntityTranslationFile = "entities.txt"
 
     sc.textFile(datasetPath + EntityTranslationFile)
-      .map(_.split('\t').head)
-      .toSideSet
+      .map { l =>
+        val spans = l.split('\t')
+        (spans(0), spans(1).asInstanceOf[Long]) // we only have two elements there
+      }
+      .asMapSideInput
   }
 
   /**

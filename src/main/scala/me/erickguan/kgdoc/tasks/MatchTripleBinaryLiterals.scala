@@ -34,15 +34,26 @@ object MatchTripleBinaryLiterals {
     val acceptedLanguage = args.list("accepted_language").toSet
 
     sc.textFile(args("input"))
-      .withSideInputs(entities.side)
-      .filter { (l, ctx) =>
-        val t = l.split('\t')
-        val ents = ctx(entities.side)
+      .map { l =>
+        val spans = l.split('\t')
+        (spans(0), spans(1))
+      }
+      .withSideInputs(entities)
+      .filter { (spans, ctx) =>
+        val ents: Map[String, Long] = ctx(entities)
+        val ent = spans._1
+        val rest = spans._2
 
-        ents(t.head) && l
-          .split('@')
-          .tail
-          .exists(lang => acceptedLanguage(lang.toLowerCase))
+        ents.isDefinedAt(ent) && // test entity exists
+        acceptedLanguage(
+          rest
+            .slice(rest.lastIndexOf('@') + 1, rest.length)
+            .toLowerCase)
+      }
+      .map { (spans, ctx) =>
+        val ents = ctx(entities)
+        val rest = spans._2
+        s"${ents(spans._1)}\t${rest.patch(rest.lastIndexOf('@'), "\t", 1)}"
       }
       .toSCollection
       .saveAsTextFile(args("output"))
