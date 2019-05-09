@@ -184,6 +184,22 @@ class TaskHelpers(sc: ScioContext) {
   }
 
   /**
+    * Extracts relations from a plain text translation file.
+    * @param datasetPath a path to dataset
+    * @return a iterable side input of relations map
+    */
+  def relationsFromPlaintextTranslation(datasetPath: String): SideInput[Map[String, Long]] = {
+    val RelationTranslationFile = "relations.txt"
+
+    sc.textFile(datasetPath + RelationTranslationFile)
+      .map { l =>
+        val spans = l.split('\t')
+        (spans(0), spans(1).toLong) // we only have two elements there
+      }
+      .asMapSideInput
+  }
+
+  /**
     * Extracts entities and relations from triples collection
     * @param triples all classes from Wikidata
     * @return two side sets for entities and relations
