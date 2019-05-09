@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory
 /* Usage:
    `SBT_OPTS="-Xms1G -Xmx4G -Xss2M" sbt "runMain me.erickguan.kgdoc.tasks.ExtractSelectedWikidataTriple
     --runner=DataflowRunner
+    --project=data-hub-fantasticfears
+    --zone=europe-north1-a
     --checkpoint=gs://wikidata-research-fantasticfears/triple_chk
     --input=gs://wikidata-research-fantasticfears/wikidata-*-all.json
     --selected=gs://wikidata-research-fantasticfears/movie_dataset/selected_entities.txt

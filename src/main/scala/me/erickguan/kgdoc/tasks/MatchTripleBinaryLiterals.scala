@@ -4,6 +4,8 @@ import java.io.{FileInputStream, InputStream}
 
 import com.spotify.scio._
 import com.spotify.scio.values.{SCollection, SideSet}
+import me.erickguan.kgdoc.extractors.{ItemLangLiteral, WikidataExtractor}
+import me.erickguan.kgdoc.filters.WikidataSiteFilter
 
 /*
  * better to use for Text literals
@@ -29,35 +31,56 @@ object MatchTripleBinaryLiterals {
     val (sc, args) = ContextAndArgs(cmdlineArgs)
     val h = new TaskHelpers(sc)
 
+    val items = h.extractItems(args("input"))
+    val classes = h.extractClasses(items, args("checkpoint") + "-classes")
     val entities =
       h.entitiesFromPlaintextTranslation(args("dataset"))
-    val acceptedLanguage = args.list("accepted_language").toSet
+    val relations =
+      h.relationsFromPlaintextTranslation(args("dataset"))
+    val languages: Set[String] = args.list("accepted_language").toSet
 
-    sc.textFile(args("input"))
-      .map { l =>
-        val spans = l.split('\t')
-        (spans(0), spans(1))
-      }
-      .withSideInputs(entities)
-      .filter { (spans, ctx) =>
-        val ents: Map[String, Long] = ctx(entities)
-        val ent = spans._1
-        val rest = spans._2
-
-        ents.isDefinedAt(ent) && // test entity exists
-        acceptedLanguage(
-          rest
-            .slice(rest.lastIndexOf('@') + 1, rest.length)
-            .toLowerCase)
-      }
-      .map { (spans, ctx) =>
-        val ents = ctx(entities)
-        val rest = spans._2
-        s"${ents(spans._1)}\t${rest.patch(rest.lastIndexOf('@'), "\t", 1)}"
-      }
-      .toSCollection
-      .saveAsTextFile(args("output"))
+    val bc = h.bibliographicClassesSideInput(classes)
+    val lang = h.filteredBibliographicClasses(items, bc)
+//    h.filteredDataset(lang, entities, relations)
+//
+//      .flatMap { l =>
+//        val literals = WikidataExtractor
+//          .labelLiterals(l)
+//        WikidataSiteFilter
+//          .literalByLanguages(literals, languages)
+//          .map(ItemLangLiteral.repr(_))
+//      }
+//      .saveAsTextFile(args("output"))
 
     sc.close()
+
+//    val acceptedLanguage = args.list("accepted_language").toSet
+//
+//    sc.textFile(args("input"))
+//      .map { l =>
+//        val spans = l.split('\t')
+//        (spans(0), spans(1))
+//      }
+//      .withSideInputs(entities)
+//      .filter { (spans, ctx) =>
+//        val ents: Map[String, Long] = ctx(entities)
+//        val ent = spans._1
+//        val rest = spans._2
+//
+//        ents.isDefinedAt(ent) && // test entity exists
+//        acceptedLanguage(
+//          rest
+//            .slice(rest.lastIndexOf('@') + 1, rest.length)
+//            .toLowerCase)
+//      }
+//      .map { (spans, ctx) =>
+//        val ents = ctx(entities)
+//        val rest = spans._2
+//        s"${ents(spans._1)}\t${rest.patch(rest.lastIndexOf('@'), "\t", 1)}"
+//      }
+//      .toSCollection
+//      .saveAsTextFile(args("output"))
+//
+//    sc.close()
   }
 }
