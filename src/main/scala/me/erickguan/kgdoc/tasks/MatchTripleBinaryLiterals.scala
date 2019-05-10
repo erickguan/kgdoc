@@ -13,8 +13,8 @@ import me.erickguan.kgdoc.json.WikidataItem
   Usage:
    `SBT_OPTS="-Xms1G -Xmx8G -Xss2M" sbt "runMain me.erickguan.kgdoc.tasks.MatchTripleBinaryLiterals
     --runner=SparkRunner
-    --dataset=/data/wikidata/dataset
-    --input=/data/wikidata/prepared_dump
+    --dataset=/data/wikidata/dataset/
+    --input=/data/wikidata/prepared_dump/part-*
     --output=/data/wikidata/dataset/labels/
     --accepted_language=en,zh-hans,zh-cn,zh-hant,zh-tw,sv
 
@@ -38,7 +38,7 @@ object MatchTripleBinaryLiterals {
       h.relationsFromPlaintextTranslation(args("dataset"))
     val languages: Set[String] = args.list("accepted_language").toSet
 
-    val ds = sc.textFile(args("dataset"))
+    val ds = sc.textFile(args("input"))
       .withSideInputs(entities, relations)
       .filter { (l, ctx) =>
         val ents = ctx(entities)
