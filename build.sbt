@@ -51,10 +51,10 @@ lazy val root: Project = project
       "com.spotify" %% "scio-test" % scioVersion % Test,
       "org.apache.beam" % "beam-runners-direct-java" % beamVersion,
       // optional dataflow runner
-//      ("org.apache.beam" % "beam-runners-spark" % beamVersion)
-//        .exclude("com.fasterxml.jackson.module", "jackson-module-scala_2.11"),
-//      "org.apache.spark" %% "spark-core" % "2.4.0",
-//      "org.apache.spark" %% "spark-streaming" % "2.4.0",
+      ("org.apache.beam" % "beam-runners-spark" % beamVersion)
+        .exclude("com.fasterxml.jackson.module", "jackson-module-scala_2.11"),
+      "org.apache.spark" %% "spark-core" % "2.4.0",
+      "org.apache.spark" %% "spark-streaming" % "2.4.0",
       "org.apache.beam" % "beam-runners-google-cloud-dataflow-java" % beamVersion,
       //      loggerLib % Compile,
       confLib % Compile,
