@@ -9,7 +9,7 @@ import me.erickguan.kgdoc.processors.WikidataJsonDumpLineProcessor
    `SBT_OPTS="-Xms1G -Xmx8G -Xss2M" sbt "runMain me.erickguan.kgdoc.tasks.PrepareWikidataDump
     --runner=SparkRunner
     --checkpoint=/data/wikidata/triple_chk
-    --input=/data/wikidata/wikidata-dump-*.json
+    --input=/data/wikidata/wikidata-*-all.json
     --output=/data/wikidata/prepared_dump
  */
 object PrepareWikidataDump {
