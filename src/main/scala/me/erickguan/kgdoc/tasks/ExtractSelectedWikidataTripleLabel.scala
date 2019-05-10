@@ -11,14 +11,14 @@ import me.erickguan.kgdoc.json.WikidataItem
 /*
  * better to use for Text literals
   Usage:
-   `SBT_OPTS="-Xms1G -Xmx8G -Xss2M" sbt "runMain me.erickguan.kgdoc.tasks.MatchTripleBinaryLiterals
+   `SBT_OPTS="-Xms1G -Xmx8G -Xss2M" sbt "runMain me.erickguan.kgdoc.tasks.ExtractSelectedWikidataTripleLabel
     --runner=SparkRunner
     --dataset=/data/wikidata/dataset/
     --input=/data/wikidata/prepared_dump/part-*
     --output=/data/wikidata/dataset/labels/
     --accepted_language=en,zh-hans,zh-cn,zh-hant,zh-tw,sv
 
-   SBT_OPTS="-Xms1G -Xmx4G -Xss4M" sbt "runMain me.erickguan.kgdoc.tasks.MatchTripleBinaryLiterals
+   SBT_OPTS="-Xms1G -Xmx4G -Xss4M" sbt "runMain me.erickguan.kgdoc.tasks.ExtractSelectedWikidataTripleLabel
     --runner=DataflowRunner
     --project=data-hub-fantasticfears
     --zone=europe-north1-a
@@ -27,7 +27,7 @@ import me.erickguan.kgdoc.json.WikidataItem
     --output=gs://wikidata-research-fantasticfears/description/
     --accepted_language=en,zh-hans,zh-cn,zh-hant,zh-tw,sv"
  */
-object MatchTripleBinaryLiterals {
+object ExtractSelectedWikidataTripleLabel {
   def main(cmdlineArgs: Array[String]): Unit = {
     val (sc, args) = ContextAndArgs(cmdlineArgs)
     val h = new TaskHelpers(sc)
