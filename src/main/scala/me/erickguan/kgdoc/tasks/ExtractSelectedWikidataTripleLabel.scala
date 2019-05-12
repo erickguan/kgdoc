@@ -16,7 +16,7 @@ import me.erickguan.kgdoc.json.WikidataItem
     --dataset=/data/wikidata/dataset/
     --input=/data/wikidata/prepared_dump/part-*
     --output=/data/wikidata/dataset/labels/
-    --accepted_language=en,zh-hans,zh-cn,zh-hant,zh-tw,sv
+    --accepted_language=en,en-gb,en-ca,zh-hans,zh-cn,zh-hant,zh-tw,sv
 
    SBT_OPTS="-Xms1G -Xmx4G -Xss4M" sbt "runMain me.erickguan.kgdoc.tasks.ExtractSelectedWikidataTripleLabel
     --runner=DataflowRunner
@@ -25,7 +25,7 @@ import me.erickguan.kgdoc.json.WikidataItem
     --dataset=gs://wikidata-research-fantasticfears/dataset/
     --input=gs://wikidata-research-fantasticfears/wikidata-description.txt
     --output=gs://wikidata-research-fantasticfears/description/
-    --accepted_language=en,zh-hans,zh-cn,zh-hant,zh-tw,sv"
+    --accepted_language=en,en-gb,en-ca,zh-hans,zh-cn,zh-hant,zh-tw,sv"
  */
 object ExtractSelectedWikidataTripleLabel {
   def main(cmdlineArgs: Array[String]): Unit = {

@@ -22,7 +22,7 @@ import me.erickguan.kgdoc.json.WikidataItem
     --dataset=gs://wikidata-research-fantasticfears/dataset/
     --input=gs://wikidata-research-fantasticfears/wikidata-description.txt
     --output=gs://wikidata-research-fantasticfears/description/
-    --accepted_language=en,zh-hans,zh-cn,zh-hant,zh-tw,sv"
+    --accepted_language=en,en-gb,en-ca,zh-hans,zh-cn,zh-hant,zh-tw,sv"
  */
 object ExtractSelectedWikidataTripleDesc {
   def main(cmdlineArgs: Array[String]): Unit = {
