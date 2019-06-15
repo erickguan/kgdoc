@@ -13,9 +13,9 @@ import me.erickguan.kgdoc.json.WikidataItem
   Usage:
    `SBT_OPTS="-Xms1G -Xmx8G -Xss2M" sbt "runMain me.erickguan.kgdoc.tasks.ExtractSelectedWikidataTripleLabel
     --runner=SparkRunner
-    --dataset=/data/wikidata/dataset/
+    --dataset=/data/wikidata/small_movie_dataset/
     --input=/data/wikidata/prepared_dump/part-*
-    --output=/data/wikidata/dataset/labels/
+    --output=/data/wikidata/small_movie_dataset/labels/
     --accepted_language=en,en-gb,en-ca,zh-hans,zh-cn,zh-hant,zh-tw,sv
 
    SBT_OPTS="-Xms1G -Xmx4G -Xss4M" sbt "runMain me.erickguan.kgdoc.tasks.ExtractSelectedWikidataTripleLabel

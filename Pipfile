@@ -11,9 +11,9 @@ lxml = "*"
 justext = "*"
 unidecode = "*"
 tldextract = "*"
-lazynlp = {editable = true,git = "https://github.com/chiphuyen/lazynlp",ref = "master"}
 wikipedia-api = "*"
 psycopg2 = "*"
+urllib3 = "*"
 
 [requires]
 python_version = "3.7"
